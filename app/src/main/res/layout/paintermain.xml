@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/topLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:screenOrientation="portrait"
+    android:weightSum="1">
+
+    <FrameLayout
+        android:id="@+id/painter_main"
+        android:layout_width="363dp"
+        android:layout_height="503dp"
+        android:orientation="horizontal"
+        android:screenOrientation="portrait"/>
+
+</LinearLayout>
