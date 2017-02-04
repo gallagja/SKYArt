@@ -7,4 +7,6 @@ add
 ndk.dir=C\:\\Users\\jt10g_000\\AppData\\Local\\Android\\Sdk\\ndk-bundle
 sdk.dir=C\:\\Users\\jt10g_000\\AppData\\Local\\Android\\Sdk
 
-to Local Properties and install ndk cmake and lldb under tools ->android-> sdk manadger
+to Local Properties and install ndk cmake and lldb under tools ->android-> sdk manadger 
+
+after install android support repository
