@@ -1,6 +1,5 @@
 package Renderer;
 
-import android.content.Context;
 import android.opengl.Matrix;
 
 /**
@@ -12,14 +11,6 @@ public class Entity {
     private float[] mPos;
 
     private EntityController mController;
-
-    private static Context mContext;
-    public static void setContext(Context context) {
-        mContext = context;
-    }
-    public static Context getContext() {
-        return mContext;
-    }
 
     Entity() {
         mTransform = new float[16];
