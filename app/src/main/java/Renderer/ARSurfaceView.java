@@ -24,8 +24,4 @@ public class ARSurfaceView extends GLSurfaceView {
         mRenderer = new GLRenderer(context);
         super.setRenderer(mRenderer);
     }
-
-    public GLRenderer getmRenderer(){
-        return mRenderer;
-    }
 }
