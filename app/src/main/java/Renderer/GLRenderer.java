@@ -13,6 +13,8 @@ import java.util.Map;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import Painter.ARCanvas;
+
 /**
  * Created by ajluntz on 2/6/17.
  */
@@ -22,11 +24,12 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     List<Drawable> mInitQueue;
     List<Drawable> mDeleteQueue;
 
+
     Context mContext;
 
     static Camera mCam;
 
-    GLRenderer(@NonNull Context context) {
+    public GLRenderer(@NonNull Context context) {
         super();
         mCam = new Camera();
 
@@ -35,6 +38,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         mDrawables = new HashMap<>();
         mInitQueue = new ArrayList<>();
         mDeleteQueue = new ArrayList<>();
+
     }
 
     public static Camera getCamera() {
