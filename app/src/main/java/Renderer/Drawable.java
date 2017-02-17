@@ -15,7 +15,7 @@ public class Drawable extends Entity {
     private int mModelViewHandle;
     private int mProjectionHandle;
 
-    Drawable() {
+    public Drawable() {
         super();
         mState = null;
         mViewMatrix = new float[16];

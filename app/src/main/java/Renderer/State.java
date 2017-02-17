@@ -19,7 +19,7 @@ public class State {
     delete
      */
 
-    State() {
+    public State() {
         mProgram = -1;
     }
 

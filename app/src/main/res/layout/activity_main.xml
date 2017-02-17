@@ -15,9 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/textureView"/>
-        <android.opengl.GLSurfaceView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/glView2" />
+
 
 </RelativeLayout>
