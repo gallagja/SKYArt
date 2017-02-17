@@ -13,8 +13,6 @@ import java.util.Map;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import Painter.ARCanvas;
-
 /**
  * Created by ajluntz on 2/6/17.
  */
