@@ -18,23 +18,22 @@ public class Splash extends Activity {
 
     /** Duration of wait **/
     private final int SPLASH_DISPLAY_LENGTH = 1000;
+    public boolean close_on_fail = true;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.splash);
-        Permissions.check(this, Manifest.permission.CAMERA);
+        Permissions.check(this, Manifest.permission.CAMERA, 0);
 
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            case 0: {
+
                     new Handler().postDelayed(new Runnable(){
                         @Override
                         public void run() {
@@ -45,12 +44,28 @@ public class Splash extends Activity {
                         }
                     }, SPLASH_DISPLAY_LENGTH);
 
-                } else {
-                    finish();
-                    // permission denied, boo!
-                }
-                return;
+
+                break;
+
+
             }
+            case 1:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    new Handler().postDelayed(new Runnable(){
+                        @Override
+                        public void run() {
+                /* Create an Intent that will start the Menu-Activity. */
+                            Intent mainIntent = new Intent(Splash.this,MainActivity.class);
+                            Splash.this.startActivity(mainIntent);
+                            Splash.this.finish();
+                        }
+                    }, SPLASH_DISPLAY_LENGTH);
+
+                }else{
+                    finish();
+                }
+                break;
 
         }
     }
