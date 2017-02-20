@@ -5,16 +5,20 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="skyart.skyffti.MainActivity">
+    tools:context="skyart.skyffti.MainActivity"
+    tools:background="@android:color/background_dark">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Please enable camera permissions."/>
+            tools:background="@android:color/background_dark"
+            android:foreground="@android:color/background_dark" />
         <TextureView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/textureView"/>
+            android:id="@+id/textureView"
+            android:background="@android:color/background_dark"
+            android:foreground="@android:color/background_dark" />
 
 
 </RelativeLayout>

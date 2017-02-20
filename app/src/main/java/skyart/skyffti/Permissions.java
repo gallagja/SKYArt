@@ -13,15 +13,12 @@ import android.support.v4.content.ContextCompat;
 
 public class Permissions {
 
-
-    public static int camera_code = 1; //main check
-    public static int internet_code = 2;
-
-    public static void check(Activity activity, String permission){
+    public static void check(Activity activity, String permission, int close_on_fail){
         // do we have permission?
 
+
             ActivityCompat.requestPermissions(activity,
-                    new String[]{permission}, camera_code);
+                    new String[]{permission}, close_on_fail);
 
     }
 
