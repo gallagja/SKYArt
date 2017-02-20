@@ -107,31 +107,34 @@ public class CameraHandler implements TextureView.SurfaceTextureListener
     }
     private BackgroundHandler mBackgroundHandler;
 
+    // Always choose the first one, this will be what the service uses by default.
     private Size chooseSize(Size[] choices, int maxWidth, int maxHeight) {
-        Size curr = new Size(0,0);
+//        Size curr = new Size(0,0);
 
-        for (Size option : choices) {
+//        for (Size option : choices) {
+//            Log.d("CameraHandler", "Camera("+option.getWidth()+","+option.getHeight()+") -> aspect: "+(float)option.getWidth()/(float)option.getHeight());
+
             // Small enough
-            if (option.getWidth() <= maxWidth && option.getHeight() <= maxHeight) {
-                if (curr.getWidth() == 0 || curr.getHeight() == 0) {
-                    curr = option;
-                }
+//            if (option.getWidth() <= maxWidth && option.getHeight() <= maxHeight) {
+//                if (curr.getWidth() == 0 || curr.getHeight() == 0) {
+//                    curr = option;
+//                }
                 // Choose the biggest and badest
-                else if (curr.getHeight() < option.getHeight() &&
-                        curr.getWidth()  < option.getWidth()) {
-                    curr = option;
-                }
-            }
-        }
+//                else if (curr.getHeight() < option.getHeight() &&
+//                        curr.getWidth()  < option.getWidth()) {
+//                    curr = option;
+//                }
+//            }
+//        }
 
         // If the currently picked size is good, then go with it,
         //  otherwise just pick the first size. Something is better
         //  than nothing?
-        if (curr.getWidth() == 0 || curr.getHeight() == 0) {
+//        if (curr.getWidth() == 0 || curr.getHeight() == 0) {
             return choices[0];
-        } else {
-            return curr;
-        }
+//        } else {
+//            return curr;
+//        }
     }
 
     private void configureTextureView(Size cameraSize) {
@@ -151,27 +154,34 @@ public class CameraHandler implements TextureView.SurfaceTextureListener
 
         // This gets a little funky, so we want to figure out exactly what stretching
         //  is needed to make the streaming camera look right.
-        scaleToWidth =  (camWidth*texAspect)/(texWidth*aspect);//Math.max(1.0f / texAspect, 1.0f / aspect);
-        if (mTextureView.getHeight() > mTextureView.getWidth()) {
-            scaleToHeight = 1f;
+
+        if (mTextureView.getHeight() >= mTextureView.getWidth()) {
+            scaleToHeight = 1.0f;
+            scaleToWidth = (camWidth*texAspect)/(texWidth*aspect);
+
 
             float max = Math.max(texWidth*scaleToWidth, texWidth);
             float min = Math.min(texWidth*scaleToWidth, texWidth);
             xoff = (int) ((min - max) / 2.0f);
         } else {
-            scaleToHeight = Math.max(texAspect, aspect);
+            scaleToHeight = (texHeight*texAspect) / (camHeight*aspect);
+            scaleToWidth = 1.0f;
 
             float max = Math.max(texHeight*scaleToHeight, texHeight);
             float min = Math.min(texHeight*scaleToHeight, texHeight);
             yoff = (int) ((min - max) / 2.0f);
         }
 
-        Log.d("CameraHandler", "texture size: (" + texWidth + ", " + texHeight + ")");
-        Log.d("CameraHandler", "texture aspect: " + texAspect);
-        Log.d("CameraHandler", "camera size: (" + camWidth + ", " + camHeight +")");
-        Log.d("CameraHandler", "camera aspect: " + aspect);
+
+        Log.d("CameraHandler", "Texture size:" + texWidth + ", " + texHeight);
+        Log.d("CameraHandler", "Texture aspect: " + texAspect);
+
+        Log.d("CameraHandler", "Camera size:" + camWidth + ", " + camHeight);
+        Log.d("CameraHandler", "Camera  aspect: " + aspect);
 
         Log.d("CameraHandler", "setScale("+ scaleToWidth + ", " + scaleToHeight +")");
+        Log.d("CameraHandler", "Virtual Size("+ texWidth*scaleToWidth + ", " + texHeight*scaleToHeight +")");
+        Log.d("CameraHandler", "Virtual Aspect:"+ (texWidth*scaleToWidth) / (texHeight*scaleToHeight));
         Log.d("CameraHandler", "translate(" + xoff + ", " + yoff + ")");
 
         Log.d("CameraHandler", "Virtual Size("+ texWidth*scaleToWidth + ", " + texHeight*scaleToHeight +")");
@@ -221,7 +231,8 @@ public class CameraHandler implements TextureView.SurfaceTextureListener
                 if (map == null)
                     continue;
 
-                Size optSize = chooseSize(map.getOutputSizes(SurfaceTexture.class), 10000, 10000);
+                Size optSize = chooseSize(map.getOutputSizes(SurfaceTexture.class),
+                        10000, 10000);
 
                 mCamSize = optSize;
                 this.configureTextureView(mCamSize);
