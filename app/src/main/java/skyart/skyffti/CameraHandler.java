@@ -154,9 +154,11 @@ public class CameraHandler implements TextureView.SurfaceTextureListener
 
         // This gets a little funky, so we want to figure out exactly what stretching
         //  is needed to make the streaming camera look right.
+
         if (mTextureView.getHeight() >= mTextureView.getWidth()) {
             scaleToHeight = 1.0f;
             scaleToWidth = (camWidth*texAspect)/(texWidth*aspect);
+
 
             float max = Math.max(texWidth*scaleToWidth, texWidth);
             float min = Math.min(texWidth*scaleToWidth, texWidth);
@@ -170,6 +172,7 @@ public class CameraHandler implements TextureView.SurfaceTextureListener
             yoff = (int) ((min - max) / 2.0f);
         }
 
+
         Log.d("CameraHandler", "Texture size:" + texWidth + ", " + texHeight);
         Log.d("CameraHandler", "Texture aspect: " + texAspect);
 
@@ -180,6 +183,8 @@ public class CameraHandler implements TextureView.SurfaceTextureListener
         Log.d("CameraHandler", "Virtual Size("+ texWidth*scaleToWidth + ", " + texHeight*scaleToHeight +")");
         Log.d("CameraHandler", "Virtual Aspect:"+ (texWidth*scaleToWidth) / (texHeight*scaleToHeight));
         Log.d("CameraHandler", "translate(" + xoff + ", " + yoff + ")");
+
+        Log.d("CameraHandler", "Virtual Size("+ texWidth*scaleToWidth + ", " + texHeight*scaleToHeight +")");
 
         Matrix xform = new Matrix();
         mTextureView.getTransform(xform);
