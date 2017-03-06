@@ -7,13 +7,19 @@ import android.view.TextureView;
 import android.widget.Toast;
 
 import Renderer.ARSurfaceView;
+import Renderer.Camera;
+import Renderer.SensorEntityController;
 
 
 public class MainActivity extends Activity{
 
 
     private static final int SPLASH_DISPLAY_LENGTH = 100;
+    private Camera mCamera;
+    private CameraHandler mCameraHandler;
+    private ARSurfaceView arView;
 
+    private static MainActivity instance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,12 +27,23 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_main);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        init();
+    }
 
-        CameraHandler ch = new CameraHandler(this, (TextureView) this.findViewById(R.id.textureView));
-        ARSurfaceView arView = new ARSurfaceView(this);
+    private void init(){
+
+        mCameraHandler = new CameraHandler(this, (TextureView) this.findViewById(R.id.textureView));
+        arView = new ARSurfaceView(this);
         addContentView(arView, this.findViewById(R.id.textureView).getLayoutParams());
+        mCamera = arView.getmRenderer().getCamera();
+        SensorEntityController camController = new SensorEntityController();
+        mCamera.setController(camController);
 
+        instance = this;
+    }
 
+    public static void makeToast(String text){
+        Toast.makeText(instance, text, Toast.LENGTH_SHORT);
     }
 
 
