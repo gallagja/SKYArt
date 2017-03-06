@@ -1,6 +1,7 @@
 package skyart.skyffti;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.TextureView;
@@ -15,6 +16,7 @@ public class MainActivity extends Activity{
 
 
     private static final int SPLASH_DISPLAY_LENGTH = 100;
+    private static Context mContext;
     private Camera mCamera;
     private CameraHandler mCameraHandler;
     private ARSurfaceView arView;
@@ -38,7 +40,7 @@ public class MainActivity extends Activity{
         mCamera = arView.getmRenderer().getCamera();
         SensorEntityController camController = new SensorEntityController();
         mCamera.setController(camController);
-
+        mContext = this.getApplicationContext();
         instance = this;
     }
 
@@ -60,5 +62,9 @@ public class MainActivity extends Activity{
 
     public void showToast(String s) {
         Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 }

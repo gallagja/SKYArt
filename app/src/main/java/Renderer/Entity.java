@@ -1,6 +1,9 @@
 package Renderer;
 
+import android.content.Context;
 import android.opengl.Matrix;
+
+import skyart.skyffti.MainActivity;
 
 /**
  * Created by ajluntz on 2/8/17.
@@ -101,5 +104,9 @@ public class Entity {
         for (int i = 0; i < mPos.length; ++i) {
             mPos[i] = mTransform[12 + i];
         }
+    }
+
+    public static Context getContext() {
+        return MainActivity.getContext();
     }
 }
