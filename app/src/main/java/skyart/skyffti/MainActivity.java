@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.TextureView;
 import android.widget.Toast;
 
+import Painter.CanvasDrawable;
 import Renderer.ARSurfaceView;
 import Renderer.Camera;
 import Renderer.SensorEntityController;
@@ -35,9 +36,16 @@ public class MainActivity extends Activity{
         mCameraHandler = new CameraHandler(this, (TextureView) this.findViewById(R.id.textureView));
         arView = new ARSurfaceView(this);
         addContentView(arView, this.findViewById(R.id.textureView).getLayoutParams());
+
         mCamera = arView.getmRenderer().getCamera();
+        SensorControl.initInstance(this);
         SensorEntityController camController = new SensorEntityController();
         mCamera.setController(camController);
+
+        CanvasDrawable.setContext(this);
+        CanvasDrawable canvas = new CanvasDrawable();
+
+        arView.getmRenderer().addEntity("CanvasDrawable", canvas);
 
         instance = this;
     }

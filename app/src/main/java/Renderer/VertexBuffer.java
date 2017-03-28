@@ -49,7 +49,7 @@ public class VertexBuffer  {
         mMode = GLES20.GL_TRIANGLES;
     }
 
-    VertexBuffer(int floatsPerElement) {
+    public VertexBuffer(int floatsPerElement) {
         mFloatsPerVert = floatsPerElement;
         mBufferName = -1;
         mAttribLoc = -1;

@@ -72,11 +72,16 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
     public void initGL() {
         // Unfortunately if this gets hit, we kinda need to redo all the GL stuff...... at least it seems like it
+        mDeleteQueue.clear();
+        mInitQueue.clear();
         for (Map.Entry<String, Drawable> entry : mDrawables.entrySet()) {
             Drawable entity = entry.getValue();
             mDeleteQueue.add(entity);
             mInitQueue.add(entity);
         }
+        
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     @Override

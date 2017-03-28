@@ -13,12 +13,14 @@ import skyart.skyffti.SensorControl;
 public class SensorEntityController extends EntityController{
     public void apply(Entity entity) {
         try {
-            entity.translate(SensorControl.getInstance().getSumPos());
-            entity.rotate(SensorControl.getInstance().getSumHPR());
+//            entity.translate(SensorControl.getInstance().getSumPos());
 
-            MainActivity.makeToast(entity.getPosition()[0]+"");
+            if (SensorControl.getInstance().hprDirty()) {
+                float [] hpr = SensorControl.getInstance().getHPR();
+                entity.rotate(hpr);
+            }
         }catch(Exception e){
-            Log.d("Sensor", "Error in SensorEntityController... Continuing");
+            Log.e("Sensor", "Error in SensorEntityController... " + e);
         }
 
 

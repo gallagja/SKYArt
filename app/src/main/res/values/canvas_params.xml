@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="canvas_height" format="float" type="raw">2.0</item>
+    <item name="canvas_radius" format="float" type="raw">2.0</item>
+
+    <item name="canvas_pixels_per_meter" format="float" type="raw">100</item>
+
+    <item name="canvas_cylinder_slices" format="integer" type="raw">64</item>
+</resources>
