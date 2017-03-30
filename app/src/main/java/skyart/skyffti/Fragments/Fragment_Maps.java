@@ -29,101 +29,101 @@ import Renderer.SensorEntityController;
 import skyart.skyffti.R;
 
 
-public class Fragment_Maps extends FragmentActivity {
-
+public class Fragment_Maps extends Fragment implements OnMapReadyCallback {
 
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static class PlaceholderFragment extends Fragment implements OnMapReadyCallback {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-        public static Fragment instance;
-        private GoogleMap mMap;
-        private LocationManager mLm;
-        private LocationListener mLocationListener;
-        private double lat, lon;
 
-        public PlaceholderFragment() {
-
-        }
-
-        public void init() {
+    /**
+     * The fragment argument representing the section number for this
+     * fragment.
+     */
+    private static final String ARG_SECTION_NUMBER = "section_number";
+    public static Fragment instance;
+    private GoogleMap mMap;
+    private LocationManager mLm;
+    private LocationListener mLocationListener;
+    private double lat, lon;
 
 
-        }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            instance = fragment;
-            return fragment;
-        }
+    public void init() {
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.activity_maps, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            //setContentView(R.layout.activity_maps);
-            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-            SupportMapFragment mapFragment = (SupportMapFragment) this.getActivity().getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-            //mapFragment.getMapAsync(this);
-            mLm = (LocationManager) this.getActivity().getSystemService(LOCATION_SERVICE);
-
-            return rootView;
-        }
-
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
-            mMap = googleMap;
-
-            if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            mMap.setMyLocationEnabled(true);
-
-            //LatLng location = new LatLng(lat, lon);
-            //mMap.addMarker(new MarkerOptions().position(location).title("Your current location"));
-            //mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-        }
 
     }
 
+    /**
+     * Returns a new instance of this fragment for the given section
+     * number.
+     */
+    public static Fragment_Maps newInstance(int sectionNumber) {
+        Fragment_Maps fragment = new Fragment_Maps();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        fragment.setArguments(args);
+        instance = fragment;
+        return fragment;
+    }
 
-
-    /*
     @Override
-    protected void onStart() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.activity_maps, container, false);
+        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+        //setContentView(R.layout.activity_maps);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+        SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
+
+        mapFragment.getMapAsync(this);
+        mLm = (LocationManager) this.getActivity().getSystemService(this.getActivity().LOCATION_SERVICE);
+
+
+        return rootView;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMap.getUiSettings().setAllGesturesEnabled(false);
+        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+
+        LatLng location = new LatLng(lat, lon);
+        mMap.addMarker(new MarkerOptions().position(location).title("Your current location"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+    }
+
+
+    @Override
+    public void onStart() {
         super.onStart();
+
         mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 //when location changed change text
                 lon = location.getLongitude();
                 lat = location.getLatitude();
-                //LatLng latLng = new LatLng(lat, lon);
-                //mMap.addMarker(new MarkerOptions().position(latLng).title("Your current location"));
-                //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                LatLng latLng = new LatLng(lat, lon);
+                if (mMap != null) {
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("Your current location"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                }
             }
 
             @Override
@@ -139,7 +139,7 @@ public class Fragment_Maps extends FragmentActivity {
             }
         };
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -151,14 +151,7 @@ public class Fragment_Maps extends FragmentActivity {
         }
         mLm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, mLocationListener);
     }
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-
 }
+
+
+

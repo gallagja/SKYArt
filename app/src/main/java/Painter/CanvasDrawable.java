@@ -13,6 +13,7 @@ import Renderer.Drawable;
 import Renderer.GLErrors;
 import Renderer.State;
 import Renderer.VertexBuffer;
+import skyart.skyffti.Fragments.fragment_colorpick;
 import skyart.skyffti.R;
 import skyart.skyffti.Utils.ResourceLoader;
 
@@ -63,7 +64,7 @@ public class CanvasDrawable extends Drawable {
         super.draw();
 
         // TODO: Load textures
-        final float [] vColor = {1.0f, 1.0f, 1.0f, 0.25f};
+        final float [] vColor = {(float)(fragment_colorpick.PlaceholderFragment.instance.getRed()/255), (float)(fragment_colorpick.PlaceholderFragment.instance.getGreen()/255), (float)(fragment_colorpick.PlaceholderFragment.instance.getBlue()/255), 0.55f};
         GLES20.glUniform4fv(mShaderData.colorLoc, 1, vColor, 0);
 
         mVertexBuffer.draw();

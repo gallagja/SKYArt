@@ -36,6 +36,18 @@ public class fragment_colorpick extends Fragment {
             return color;
         }
 
+        public int getRed() {
+            return red;
+        }
+
+        public int getGreen() {
+            return green;
+        }
+
+        public int getBlue() {
+            return blue;
+        }
+
         public PlaceholderFragment() {
 
         }
