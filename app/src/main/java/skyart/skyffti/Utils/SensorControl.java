@@ -1,5 +1,6 @@
-package skyart.skyffti;
+package skyart.skyffti.Utils;
 
+import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -16,11 +17,11 @@ import static android.content.Context.SENSOR_SERVICE;
 
 public class SensorControl  implements SensorEventListener {
 
-    private MainActivity activity;
+    private Activity activity;
     SensorManager sensorManager;
     private static SensorControl instance;
 
-    public float scale = 0.0f; //scales the output
+    public float scale = 100.0f; //scales the output
     public int offset = 500;
 
     float xPos = 10.0f;
@@ -46,14 +47,24 @@ public class SensorControl  implements SensorEventListener {
     private float yaw;
     private float pitch;
 
+    private float absRoll;
+    private float absYaw;
+    private float absPitch;
+
+    private float rollG;
+    private float yawG;
+    private float pitchG;
+
     Semaphore PosSem = new Semaphore(1);
     Semaphore HDRSem = new Semaphore(1);
+    private boolean mGravityHPRDirtied;
 
-    public SensorControl(MainActivity ma) {
+    public SensorControl(Activity ma) {
         activity = ma;
         sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_UI);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY), SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public SensorControl() {
@@ -61,9 +72,10 @@ public class SensorControl  implements SensorEventListener {
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_UI);
 //        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY), SensorManager.SENSOR_DELAY_FASTEST);
     }
 
-    public static void initInstance(MainActivity ma) {
+    public static void initInstance(Activity ma) {
         if (instance == null) {
             instance = new SensorControl(ma);
             instance.mHPRDirtied = false;
@@ -82,18 +94,54 @@ public class SensorControl  implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
 
         if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            yaw   += (float) (1.0/1000000000.0 * (double)(event.timestamp - mLastTime)) * Math.toDegrees(event.values[1]);
-            pitch += (float) (1.0/1000000000.0 * (double)(event.timestamp - mLastTime)) * Math.toDegrees(event.values[0]);
-            roll  += (float) (1.0/1000000000.0 * (double)(event.timestamp - mLastTime)) * Math.toDegrees(event.values[2]);
+            float
+                curYaw  = (float) ((1.0/1000000000.0 * (double)(event.timestamp - mLastTime)) * Math.toDegrees(event.values[1])),
+                curPitch= (float) ((1.0/1000000000.0 * (double)(event.timestamp - mLastTime)) * Math.toDegrees(event.values[0])),
+                curRoll = (float) ((1.0/1000000000.0 * (double)(event.timestamp - mLastTime)) * Math.toDegrees(event.values[2]));
+
+            absYaw   += curYaw;
+            absPitch += curPitch;
+            absRoll  += curRoll;
+
+            yaw   += curYaw;
+            pitch += curPitch;
+            roll  += curRoll;
 
             mLastTime = event.timestamp;
 
             mHPRDirtied = true;
         }
 
+        if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
+
+
+
+            float ysqr = event.values[1] * event.values[1];
+
+            // roll (x-axis rotation)
+            float t0 = (float) 2.0f * (1.0f * event.values[0] + event.values[1] * event.values[2]);
+            float t1 = (float) (1.0f - 2.0f * (event.values[0] * event.values[0] + ysqr));
+            rollG = (float) Math.toDegrees(Math.atan2(t0, t1));
+
+            // pitch (y-axis rotation)
+            float t2 = (float) (2.0f * (1.0f * event.values[1] - event.values[2] * event.values[0]));
+            t2 = (float) (t2 > 1.0f ? 1.0f : t2);
+            t2 = (float) (t2 < -1.0f ? -1.0f : t2);
+            pitchG = (float) Math.toDegrees(Math.asin(t2));
+
+            // yaw (z-axis rotation)
+            float t3 = (float) (2.0f * (1.0f * event.values[2] + event.values[0] * event.values[1]));
+            float t4 = (float) (1.0f - 2.0f * (ysqr + event.values[2] * event.values[2]));
+            yawG = (float) Math.toDegrees(Math.atan2(t3, t4));
+
+            mGravityHPRDirtied = true;
+        }
+
         if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
 
-
+            absRoll = (float) Math.toDegrees(event.values[2]);
+            absYaw = (float) Math.toDegrees(event.values[1]);
+            absPitch = (float) Math.toDegrees(event.values[0]);
 //            double ysqr = q.y() * q.y();
 //
 //            // roll (x-axis rotation)
@@ -210,6 +258,9 @@ public class SensorControl  implements SensorEventListener {
     public boolean hprDirty() {
         return mHPRDirtied;
     }
+    public boolean hprGravDirty() {
+        return mHPRDirtied;
+    }
     public float[] getHPR() {
         float[] rot = {0.0f, 0.0f, 0.0f};
 
@@ -229,5 +280,25 @@ public class SensorControl  implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    public float[] getINITHPR() {
+        float[] rot = {0.0f, 0.0f, 0.0f};
+
+        try {
+            HDRSem.acquire();
+            rot = new float[]{yawG, pitchG, rollG};
+            pitchG = yawG = rollG = 0.0f;
+            HDRSem.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        mGravityHPRDirtied = false;
+        return rot;
+    }
+
+    public float[] getAbsHPR(){
+        return new float[]{absYaw, absPitch, absRoll};
     }
 }

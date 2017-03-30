@@ -1,7 +1,8 @@
-package skyart.skyffti;
+package skyart.skyffti.Utils;
 
 /**
  * Created by Coltan on 3/3/2017.
+ * Not Finsihed at all
  */
 
 

@@ -15,7 +15,7 @@ void main()
     // Once the vertex is multiplied by the Model View, the vertex
     //  is brought into our camera space and the rotatation/translation
     //  is applied.
-    gl_Position = vec4(vertexPosition.xyz, 1.0f) * vModelView;
+    gl_Position = vec4(vertexPosition.xyz, 1.0) * vModelView;
 
     // Give the fragment shader the unprojected vertex position,
     //  just incase it wants to play with it.

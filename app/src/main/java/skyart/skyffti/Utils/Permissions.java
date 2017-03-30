@@ -1,4 +1,4 @@
-package skyart.skyffti;
+package skyart.skyffti.Utils;
 
 import android.Manifest;
 import android.app.Activity;

@@ -1,24 +1,23 @@
 package skyart.skyffti;
 
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.TextureView;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
+import android.view.MotionEvent;
 import android.widget.Toast;
 
-import Painter.CanvasDrawable;
 import Renderer.ARSurfaceView;
 import Renderer.Camera;
 import Renderer.SensorEntityController;
+import skyart.skyffti.Fragments.SectionsPagerAdapter;
 
 
-public class MainActivity extends Activity{
+public class MainActivity extends FragmentActivity{
 
-
-    private static final int SPLASH_DISPLAY_LENGTH = 100;
-    private Camera mCamera;
-    private CameraHandler mCameraHandler;
-    private ARSurfaceView arView;
+    //Tab View stuff
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
 
     private static MainActivity instance;
 
@@ -28,45 +27,23 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_main);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        init();
-    }
 
-    private void init(){
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        mCameraHandler = new CameraHandler(this, (TextureView) this.findViewById(R.id.textureView));
-        arView = new ARSurfaceView(this);
-        addContentView(arView, this.findViewById(R.id.textureView).getLayoutParams());
-
-        mCamera = arView.getmRenderer().getCamera();
-        SensorControl.initInstance(this);
-        SensorEntityController camController = new SensorEntityController();
-        mCamera.setController(camController);
-
-        CanvasDrawable.setContext(this);
-        CanvasDrawable canvas = new CanvasDrawable();
-
-        arView.getmRenderer().addEntity("CanvasDrawable", canvas);
-
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(1);
+        mViewPager.setOffscreenPageLimit(3);  //So no fragments get deleted from unuse
+        //init();
         instance = this;
+
     }
 
+    /*
+    Can make a toast from any class
+     */
     public static void makeToast(String text){
         Toast.makeText(instance, text, Toast.LENGTH_SHORT);
-    }
-
-
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
-
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
-
-    public void showToast(String s) {
-        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
     }
 }

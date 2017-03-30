@@ -2,15 +2,17 @@ package Painter;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.support.annotation.NonNull;
+import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import Renderer.Camera;
 import Renderer.Drawable;
-import Renderer.GLErrors;
+import Renderer.Entity;
 import Renderer.State;
 import Renderer.VertexBuffer;
 import skyart.skyffti.R;
@@ -20,17 +22,27 @@ import skyart.skyffti.Utils.ResourceLoader;
  * Created by ajluntz on 3/28/17.
  */
 
-public class CanvasDrawable extends Drawable {
+public class PainterTest extends Drawable {
     public class CanvasShaderData {
         public int colorLoc;
     }
 
     private VertexBuffer mVertexBuffer;
     private CanvasShaderData mShaderData;
+//    private SprayerEntityController sprayerEntityController;
 
-    public CanvasDrawable() {
-        CanvasDrawable.setup();
+    public void setTransform(Entity e)
+    {
+        if (e == null) return;
 
+        super.mTransform = e.getTransform();
+        super.mPos = e.getPosition();
+    }
+
+    public PainterTest() {
+        PainterTest.setup();
+
+        //setController(new SprayerEntityController(this, Camera.getInstance()));
         mShaderData = new CanvasShaderData();
         mVertexBuffer = new VertexBuffer(3);
     }
@@ -45,11 +57,16 @@ public class CanvasDrawable extends Drawable {
 
         super.setState(program);
         super.init();
+//        sprayerEntityController = new SprayerEntityController();
+//        setController(sprayerEntityController);
 
         mShaderData.colorLoc = GLES20.glGetUniformLocation(this.getState().getProgram(), "vColor");
 
+        Log.d("PAinter", "init: get state ");
         mVertexBuffer.create();
-        mVertexBuffer.setAttribute(this.getState(), "vertexPosition");
+        mVertexBuffer.setAttribute(this.getState(), "a_Position");
+        mVertexBuffer.setAttribute(this.getState(), "a_Color");
+        mVertexBuffer.setAttribute(this.getState(), "a_Normal");
         mVertexBuffer.setMode(GLES20.GL_TRIANGLE_STRIP);
         mVertexBuffer.send(mVertices, mVertCount);
     }
@@ -63,12 +80,34 @@ public class CanvasDrawable extends Drawable {
         super.draw();
 
         // TODO: Load textures
-        final float [] vColor = {1.0f, 1.0f, 1.0f, 0.25f};
+        final float [] vColor = {1.0f, 0.0f, 0.0f, 0.95f};
         GLES20.glUniform4fv(mShaderData.colorLoc, 1, vColor, 0);
 
         mVertexBuffer.draw();
+        drawLight();
+
     }
 
+    private float[] mMVPMatrix = new float[16];
+    private void drawLight()
+    {
+        final int pointMVPMatrixHandle = GLES20.glGetUniformLocation(this.getState().getProgram(), "u_MVPMatrix");
+        final int pointPositionHandle = GLES20.glGetAttribLocation(this.getState().getProgram(), "a_Position");
+
+        // Pass in the position.
+        GLES20.glVertexAttrib3f(pointPositionHandle, 0, 0, 0);
+
+        // Since we are not using a buffer object, disable vertex arrays for this attribute.
+        GLES20.glDisableVertexAttribArray(pointPositionHandle);
+
+        // Pass in the transformation matrix.
+        Matrix.multiplyMM(mMVPMatrix, 0, Camera.getInstance().getProjection(), 0,Camera.getInstance().getTransform(), 0);
+        Matrix.multiplyMM(mMVPMatrix, 0, Camera.getInstance().getProjection(), 0, mMVPMatrix, 0);
+        GLES20.glUniformMatrix4fv(pointMVPMatrixHandle, 1, false, mMVPMatrix, 0);
+
+        // Draw the point.
+        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
+    }
 
 
     public static void setup() {
@@ -87,6 +126,7 @@ public class CanvasDrawable extends Drawable {
         mContext = context;
     }
 
+
     private static void loadCode() {
         if (mContext == null)
             return;
@@ -98,12 +138,13 @@ public class CanvasDrawable extends Drawable {
         mVertexCode =
                 ResourceLoader.readTextFileFromRawResource(
                         mContext,
-                        R.raw.canvas_vert // TODO: needs new shader with textures and shit
+                        R.raw.light_vert // TODO: needs new shader with textures and shit
                 );
+
         mFragCode =
                 ResourceLoader.readTextFileFromRawResource(
                         mContext,
-                        R.raw.canvas_frag // TODO: needs new shader with textures and shit
+                        R.raw.light_frag // TODO: needs new shader with textures and shit
                 );
     }
 
@@ -127,29 +168,29 @@ public class CanvasDrawable extends Drawable {
             y = (float) (radius * Math.sin(theta));
 
             cylinder[i*bitesPerSlice + (slice++)] = x;
-            cylinder[i*bitesPerSlice + (slice++)] = halfHeight;
             cylinder[i*bitesPerSlice + (slice++)] = y;
+            cylinder[i*bitesPerSlice + (slice++)] = -height;
 
             cylinder[i*bitesPerSlice + (slice++)] = x;
-            cylinder[i*bitesPerSlice + (slice++)] = -halfHeight;
             cylinder[i*bitesPerSlice + (slice++)] = y;
+            cylinder[i*bitesPerSlice + (slice++)] = height;
 
             x = (float) (radius * Math.cos(nextTheta));
             y = (float) (radius * Math.sin(nextTheta));
 
             cylinder[i*bitesPerSlice + (slice++)] = x;
-            cylinder[i*bitesPerSlice + (slice++)] = halfHeight;
             cylinder[i*bitesPerSlice + (slice++)] = y;
+            cylinder[i*bitesPerSlice + (slice++)] = -height;
 
             cylinder[i*bitesPerSlice + (slice++)] = x;
-            cylinder[i*bitesPerSlice + (slice++)] = -halfHeight;
             cylinder[i*bitesPerSlice + (slice++)] = y;
+            cylinder[i*bitesPerSlice + (slice++)] = height;
         }
         return cylinder;
     }
 
     static private void loadCylinder() {
-        float height = ResourceLoader.readFloatFromResource(mContext, R.raw.canvas_height);
+        float height = ResourceLoader.readFloatFromResource(mContext, R.raw.sprayer_height);
         float radius = ResourceLoader.readFloatFromResource(mContext, R.raw.canvas_radius);
         int slices = ResourceLoader.readIntFromResource  (mContext, R.raw.canvas_cylinder_slices);
 
@@ -167,4 +208,6 @@ public class CanvasDrawable extends Drawable {
         Log.d("CanvasDrawable", "Radius: " + radius);
         Log.d("CanvasDrawable", "Slices: " + slices);
     }
+
+
 }
