@@ -35,7 +35,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 return Fragment_Maps.newInstance(position + 1);
             case 2:
 
-                return  Fragment_Camera.PlaceholderFragment.newInstance(position+1);
+                return  Fragment_Camera.newInstance(position+1);
 
 
         }
