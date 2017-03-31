@@ -95,10 +95,10 @@ public class Fragment_Camera extends Fragment {
         mCamera.setController(camController);
 
 
-        //viewerDrawable.setContext(rootView.getContext());
-        //viewerDrawable canvas = new viewerDrawable();
-        CanvasDrawable.setContext(rootView.getContext());
-        CanvasDrawable canvas = new CanvasDrawable();
+        viewerDrawable.setContext(rootView.getContext());
+        viewerDrawable canvas = new viewerDrawable();
+        //CanvasDrawable.setContext(rootView.getContext());
+        //CanvasDrawable canvas = new CanvasDrawable();
         SprayerDrawable.setContext(rootView.getContext());
         SprayerDrawable sprayerDrawable = new SprayerDrawable();
         PainterTest.setContext(rootView.getContext());
