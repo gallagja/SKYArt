@@ -7,6 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import java.util.Timer;
+
 import Renderer.ARSurfaceView;
 import Renderer.Camera;
 import Renderer.SensorEntityController;
@@ -33,9 +35,11 @@ public class MainActivity extends FragmentActivity{
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setCurrentItem(1);
+
+        mViewPager.setCurrentItem(2); //sets it to the Camera View
+
         mViewPager.setOffscreenPageLimit(3);  //So no fragments get deleted from unuse
-        //init();
+
         instance = this;
 
     }

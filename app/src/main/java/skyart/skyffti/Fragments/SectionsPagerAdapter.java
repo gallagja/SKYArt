@@ -30,16 +30,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         // Return a PlaceholderFragment (defined as a static inner class below).
         switch (position){
             case 0:
-                    return Fragment_Maps.newInstance(position + 1);
+                return Fragment_Options.newInstance(position + 1);
             case 1:
-                if(Fragment_Camera.PlaceholderFragment.instance == null) {
-                return  Fragment_Camera.PlaceholderFragment.newInstance(position+1);
-                }else{
-                    return Fragment_Camera.PlaceholderFragment.instance;
-                }
-
+                return Fragment_Maps.newInstance(position + 1);
             case 2:
-                return fragment_colorpick.PlaceholderFragment.newInstance(position + 1);
+
+                return  Fragment_Camera.PlaceholderFragment.newInstance(position+1);
+
 
         }
         return FragmentTemplate.PlaceholderFragment.newInstance(position + 1);

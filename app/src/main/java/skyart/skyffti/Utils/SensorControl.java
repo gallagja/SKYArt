@@ -1,6 +1,7 @@
 package skyart.skyffti.Utils;
 
 import android.app.Activity;
+import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -65,6 +66,8 @@ public class SensorControl  implements SensorEventListener {
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_UI);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY), SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_FASTEST);
+        mLastTime = System.nanoTime();
     }
 
     public SensorControl() {
@@ -73,6 +76,8 @@ public class SensorControl  implements SensorEventListener {
 //        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY), SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_FASTEST);
+        mLastTime = System.nanoTime();
     }
 
     public static void initInstance(Activity ma) {
@@ -90,58 +95,79 @@ public class SensorControl  implements SensorEventListener {
     private boolean mHPRDirtied;
     private long mLastTime;
 
+    boolean lastTimeIsSet = false;
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            float
-                curYaw  = (float) ((1.0/1000000000.0 * (double)(event.timestamp - mLastTime)) * Math.toDegrees(event.values[1])),
-                curPitch= (float) ((1.0/1000000000.0 * (double)(event.timestamp - mLastTime)) * Math.toDegrees(event.values[0])),
-                curRoll = (float) ((1.0/1000000000.0 * (double)(event.timestamp - mLastTime)) * Math.toDegrees(event.values[2]));
+        if(lastTimeIsSet) {
+            if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+                float
+                        curYaw = (float) ((1.0 / 1000000000.0 * (double) (event.timestamp - mLastTime)) * Math.toDegrees(event.values[1])),
+                        curPitch = (float) ((1.0 / 1000000000.0 * (double) (event.timestamp - mLastTime)) * Math.toDegrees(event.values[0])),
+                        curRoll = (float) ((1.0 / 1000000000.0 * (double) (event.timestamp - mLastTime)) * Math.toDegrees(event.values[2]));
 
-            absYaw   += curYaw;
-            absPitch += curPitch;
-            absRoll  += curRoll;
+                //absYaw += curYaw;
+                //absPitch += curPitch;
+                //absRoll += curRoll;
 
-            yaw   += curYaw;
-            pitch += curPitch;
-            roll  += curRoll;
+                yaw += curYaw;
+                pitch += curPitch;
+                roll += curRoll;
 
-            mLastTime = event.timestamp;
+                mLastTime = event.timestamp;
 
-            mHPRDirtied = true;
-        }
+                mHPRDirtied = true;
+            }
 
-        if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
+            if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
+
+
+                float ysqr = event.values[1] * event.values[1];
+
+                // roll (x-axis rotation)
+                float t0 = (float) 2.0f * (1.0f * event.values[0] + event.values[1] * event.values[2]);
+                float t1 = (float) (1.0f - 2.0f * (event.values[0] * event.values[0] + ysqr));
+                rollG = (float) Math.toDegrees(Math.atan2(t0, t1));
+
+                // pitch (y-axis rotation)
+                float t2 = (float) (2.0f * (1.0f * event.values[1] - event.values[2] * event.values[0]));
+                t2 = (float) (t2 > 1.0f ? 1.0f : t2);
+                t2 = (float) (t2 < -1.0f ? -1.0f : t2);
+                pitchG = (float) Math.toDegrees(Math.asin(t2));
+
+                // yaw (z-axis rotation)
+                float t3 = (float) (2.0f * (1.0f * event.values[2] + event.values[0] * event.values[1]));
+                float t4 = (float) (1.0f - 2.0f * (ysqr + event.values[2] * event.values[2]));
+                yawG = (float) Math.toDegrees(Math.atan2(t3, t4));
+
+                mGravityHPRDirtied = true;
+            }
+
+            if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+
+                absRoll = (float) Math.toDegrees(event.values[2]);
+                absYaw = (float) Math.toDegrees(event.values[1]);
+                absPitch = (float) Math.toDegrees(event.values[0]);
+
+                float[] mRotationMatrix = new float[9];
+                float[] orientationVals = new float[3];
+                SensorManager.getRotationMatrixFromVector(mRotationMatrix,
+                        event.values);
+                SensorManager.remapCoordinateSystem(mRotationMatrix,
+                                SensorManager.AXIS_X, SensorManager.AXIS_Z,
+                                mRotationMatrix);
+                SensorManager.getOrientation(mRotationMatrix, orientationVals);
+
+                // Optionally convert the result from radians to degrees
+                orientationVals[0] = (float) Math.toDegrees(orientationVals[0]);
+                orientationVals[1] = (float) Math.toDegrees(orientationVals[1]);
+                orientationVals[2] = (float) Math.toDegrees(orientationVals[2]);
 
 
 
-            float ysqr = event.values[1] * event.values[1];
-
-            // roll (x-axis rotation)
-            float t0 = (float) 2.0f * (1.0f * event.values[0] + event.values[1] * event.values[2]);
-            float t1 = (float) (1.0f - 2.0f * (event.values[0] * event.values[0] + ysqr));
-            rollG = (float) Math.toDegrees(Math.atan2(t0, t1));
-
-            // pitch (y-axis rotation)
-            float t2 = (float) (2.0f * (1.0f * event.values[1] - event.values[2] * event.values[0]));
-            t2 = (float) (t2 > 1.0f ? 1.0f : t2);
-            t2 = (float) (t2 < -1.0f ? -1.0f : t2);
-            pitchG = (float) Math.toDegrees(Math.asin(t2));
-
-            // yaw (z-axis rotation)
-            float t3 = (float) (2.0f * (1.0f * event.values[2] + event.values[0] * event.values[1]));
-            float t4 = (float) (1.0f - 2.0f * (ysqr + event.values[2] * event.values[2]));
-            yawG = (float) Math.toDegrees(Math.atan2(t3, t4));
-
-            mGravityHPRDirtied = true;
-        }
-
-        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-
-            absRoll = (float) Math.toDegrees(event.values[2]);
-            absYaw = (float) Math.toDegrees(event.values[1]);
-            absPitch = (float) Math.toDegrees(event.values[0]);
+                absPitch = orientationVals[1];
+                absYaw = orientationVals[0];
+                absRoll = orientationVals[2];
 //            double ysqr = q.y() * q.y();
 //
 //            // roll (x-axis rotation)
@@ -161,73 +187,70 @@ public class SensorControl  implements SensorEventListener {
 //            yaw = std::atan2(t3, t4);
 
 
-            float ysqr = event.values[1] * event.values[1];
+               //float ysqr = event.values[1] * event.values[1];
+               //// roll (x-axis rotation)
+               //float t0 = (float) 2.0f * (event.values[3] * event.values[0] + event.values[1] * event.values[2]);
+               //float t1 = (float) (1.0f - 2.0f * (event.values[0] * event.values[0] + ysqr));
+               //absRoll = (float) Math.atan2(t0, t1);
+               //// pitch (y-axis rotation)
+               //float t2 = (float) (2.0f * (event.values[3] * event.values[1] - event.values[2] * event.values[0]));
+               //t2 = (float) (t2 > 1.0f ? 1.0f : t2);
+               //t2 = (float) (t2 < -1.0f ? -1.0f : t2);
+               //absPitch = (float) Math.asin(t2);
+               //// yaw (z-axis rotation)
+               //float t3 = (float) (2.0f * (event.values[3] * event.values[2] + event.values[0] * event.values[1]));
+               //float t4 = (float) (1.0f - 2.0f * (ysqr + event.values[2] * event.values[2]));
+               //absYaw = (float) Math.atan2(t3, t4);
 
-            // roll (x-axis rotation)
-            float t0 = (float) 2.0f * (1.0f * event.values[0] + event.values[1] * event.values[2]);
-            float t1 = (float) (1.0f - 2.0f * (event.values[0] * event.values[0] + ysqr));
-            roll = (float) Math.toDegrees(Math.atan2(t0, t1));
-
-            // pitch (y-axis rotation)
-            float t2 = (float) (2.0f * (1.0f * event.values[1] - event.values[2] * event.values[0]));
-            t2 = (float) (t2 > 1.0f ? 1.0f : t2);
-            t2 = (float) (t2 < -1.0f ? -1.0f : t2);
-            pitch = (float) Math.toDegrees(Math.asin(t2));
-
-            // yaw (z-axis rotation)
-            float t3 = (float) (2.0f * (1.0f * event.values[2] + event.values[0] * event.values[1]));
-            float t4 = (float) (1.0f - 2.0f * (ysqr + event.values[2] * event.values[2]));
-            yaw = (float) Math.toDegrees(Math.atan2(t3, t4));
-
-            mHPRDirtied = true;
-        }
-
-        if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-
-            //Get Time Difference
-            long time_diff = event.timestamp - prev_time;
-            //Convert to seconds
-            float dt = (float) (time_diff / 1000000000.0);
-
-            //Find Velocity
-            float velvX = prev_velcX + event.values[0] * dt * scale;
-            float velvY = prev_velcY + event.values[1] * dt * scale;
-            float velvZ = prev_velcZ + event.values[2] * dt * scale;
-
-            //Find Posisiton
-            try {
-                PosSem.acquire();
-
-                xPos = (float) (prev_posX + .5 * (prev_velcX - velvX) * dt);
-                yPos = (float) (prev_posY + .5 * (prev_velcY - velvY) * dt);
-                zPos = (float) (prev_posZ + .5 * (prev_velcZ - velvZ) * dt);
-                PosSem.release();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+               //mHPRDirtied = true;
             }
-            //You no worry bout this
-            if (xPos <= 0)
-                xPos = 0;
-            if (xPos >= 1080)
-                xPos = 1080;
-            if (yPos <= 0)
-                yPos = 0;
-            if (yPos >= 1920)
-                yPos = 1920;
 
-            //Calls the function in main activity
-            // activity.view1.touch_move(xPos, yPos, zPos);
+            if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
-            //Set current to prevs
-            prev_accelZ = event.values[2];
-            prev_accelY = event.values[1];
-            prev_accelX = event.values[0];
-            prev_velcX = velvX;
-            prev_velcY = velvY;
-            prev_velcZ = velvZ;
+                //Get Time Difference
+                long time_diff = event.timestamp - prev_time;
+                //Convert to seconds
+                float dt = (float) (time_diff / 1000000000.0);
+
+                //Find Velocity
+                float velvX = prev_velcX + event.values[0] * dt * scale;
+                float velvY = prev_velcY + event.values[1] * dt * scale;
+                float velvZ = prev_velcZ + event.values[2] * dt * scale;
+
+                //Find Posisiton
+                try {
+                    PosSem.acquire();
+
+                    xPos = (float) (prev_posX + .5 * (prev_velcX - velvX) * dt);
+                    yPos = (float) (prev_posY + .5 * (prev_velcY - velvY) * dt);
+                    zPos = (float) (prev_posZ + .5 * (prev_velcZ - velvZ) * dt);
+                    PosSem.release();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //You no worry bout this
+                if (xPos <= 0)
+                    xPos = 0;
+                if (xPos >= 1080)
+                    xPos = 1080;
+                if (yPos <= 0)
+                    yPos = 0;
+                if (yPos >= 1920)
+                    yPos = 1920;
+
+                //Calls the function in main activity
+                // activity.view1.touch_move(xPos, yPos, zPos);
+
+                //Set current to prevs
+                prev_accelZ = event.values[2];
+                prev_accelY = event.values[1];
+                prev_accelX = event.values[0];
+                prev_velcX = velvX;
+                prev_velcY = velvY;
+                prev_velcZ = velvZ;
 
 
-            prev_time = event.timestamp;
+                prev_time = event.timestamp;
 
 //            Log.d("TimeShit", "########################################");
 //            Log.d("TimeShit", "Time diff:" + dt);
@@ -235,9 +258,14 @@ public class SensorControl  implements SensorEventListener {
 //            Log.d("TimeShit", "velX:" + prev_velcX + " velY:" + prev_velcY + " velZ:" + prev_velcZ);
 //            Log.d("TimeShit", "posX:" + prev_posX + " posY:" + prev_posY + " posZ:" + prev_posZ);
 //            Log.d("TimeShit", "PosX Diff:" + (xPos - prev_posX) + " PosY Diff:" + (yPos - prev_posY) + "PosZ Diff:" + (zPos - prev_posZ));
-            prev_posX = xPos;
-            prev_posY = yPos;
-            prev_posZ = zPos;
+                prev_posX = xPos;
+                prev_posY = yPos;
+                prev_posZ = zPos;
+            }
+        }else{
+            lastTimeIsSet = true;
+            mLastTime = System.nanoTime();
+            prev_time = System.nanoTime();
         }
     }
 
@@ -287,7 +315,10 @@ public class SensorControl  implements SensorEventListener {
 
         try {
             HDRSem.acquire();
-            rot = new float[]{yawG, pitchG, rollG};
+            rot = new float[]{-absYaw, -absPitch, 0};
+            pitch = absPitch;
+            yaw = absYaw;
+            roll = absRoll;
             pitchG = yawG = rollG = 0.0f;
             HDRSem.release();
         } catch (InterruptedException e) {

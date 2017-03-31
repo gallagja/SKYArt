@@ -72,9 +72,9 @@ public class Entity {
         if (hpr.length < 3)
             throw new ArrayIndexOutOfBoundsException("Setting the rotation of Entity fails, hpr.length >= 3");
 
-        Matrix.setRotateM(mTransform, 0, hpr[0], 0.0f, 1.0f, 0.0f); // heading
-        Matrix.setRotateM(mTransform, 0, hpr[1], 1.0f, 0.0f, 0.0f); // pitch
-        Matrix.setRotateM(mTransform, 0, hpr[2], 0.0f, 0.0f, 1.0f); // roll
+        Matrix.setRotateM(mTransform, 0, hpr[0], 0.0f, 0.0f, 1.0f); // heading
+        Matrix.setRotateM(mTransform, 0, hpr[1], 0.0f, 1.0f, 0.0f); // pitch
+        Matrix.setRotateM(mTransform, 0, hpr[2], 1.0f, 0.0f, 0.0f); // roll
     }
 
     public void rotate(float [] hpr) {

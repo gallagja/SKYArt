@@ -2,7 +2,6 @@ package Painter;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
@@ -13,12 +12,11 @@ import Renderer.Camera;
 import Renderer.Drawable;
 import Renderer.Entity;
 import Renderer.EntityController;
-import Renderer.GLRenderer;
 import Renderer.State;
 import Renderer.VertexBuffer;
+import skyart.skyffti.Fragments.Fragment_Color;
 import skyart.skyffti.R;
 import skyart.skyffti.Utils.ResourceLoader;
-import skyart.skyffti.Utils.SensorControl;
 
 /**
  * Created by ajluntz on 3/28/17.
@@ -79,7 +77,9 @@ public class SprayerDrawable extends Drawable {
         super.draw();
 
         // TODO: Load textures
-        final float [] vColor = {0.0f, 1.0f, 0.0f, 0.25f};
+        //final float [] vColor = {0.0f, 1.0f, 0.0f, 0.25f};
+        final float [] vColor = {(float)(Fragment_Color.getRed()/255.0f), (float)(Fragment_Color.getGreen()/255.0f), (float)(Fragment_Color.getBlue()/255.0f), 0.55f};
+
         GLES20.glUniform4fv(mShaderData.colorLoc, 1, vColor, 0);
 
         mVertexBuffer.draw();

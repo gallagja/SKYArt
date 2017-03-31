@@ -1,7 +1,12 @@
 package skyart.skyffti.Fragments;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.drawable.ColorDrawable;
+import android.opengl.EGLExt;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -12,9 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.zip.Inflater;
+
 import Painter.CanvasDrawable;
 import Painter.PainterTest;
 import Painter.SprayerDrawable;
+import Painter.viewerDrawable;
 import Renderer.ARSurfaceView;
 import Renderer.Camera;
 import Renderer.SensorEntityController;
@@ -39,6 +47,9 @@ public class Fragment_Camera extends FragmentActivity {
     private static ARSurfaceView arView;
     private static Camera mCamera;
     private static Fragment_Camera instance;
+
+    private static int lastTouchX;
+    private static int lastTouchY;
 
     public Fragment_Camera() {
 
@@ -85,6 +96,9 @@ public class Fragment_Camera extends FragmentActivity {
             SensorEntityController camController = new SensorEntityController();
             mCamera.setController(camController);
 
+
+            //viewerDrawable.setContext(rootView.getContext());
+            //viewerDrawable canvas = new viewerDrawable();
             CanvasDrawable.setContext(rootView.getContext());
             CanvasDrawable canvas = new CanvasDrawable();
             SprayerDrawable.setContext(rootView.getContext());
@@ -93,18 +107,62 @@ public class Fragment_Camera extends FragmentActivity {
             PainterTest painter = new PainterTest();
 
 
+            //Color Picker Dialog
+            final Dialog d = new Dialog(this.getContext());
+            d.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            Fragment_Color fc = Fragment_Color.newInstance(2);
+
+
+            d.setContentView(fc.onCreateView(inflater, null, savedInstanceState));
+
+
+
+            FloatingActionButton picker = (FloatingActionButton) rootView.findViewById(R.id.floatingColorPicker);
+            picker.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    d.show();
+                    return false;
+                }
+            });
+
+
+
             arView.getmRenderer().addEntity("CanvasDrawable", canvas);
             arView.getmRenderer().addEntity("SprayerDrawable", sprayerDrawable);
             arView.getmRenderer().addEntity("Painter", painter);
             rootView.setOnTouchListener(touchMe);
+
             return rootView;
         }
+
+        //The Touch listener
         private View.OnTouchListener touchMe = new View.OnTouchListener() {
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                SensorEntityController.setRot();
-                return false;
+                int x = (int) event.getX(); //gets the touch x
+                int y = (int) event.getY(); //gets the touch y
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        //Log.i("TAG", "touched down");
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        lastTouchX = x;
+                        lastTouchY = y;
+                        //Log.i("TAG", "moving: (" + x + ", " + y + ")");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        //Log.i("TAG", "touched up");
+                        break;
+                }
+
+                if(lastTouchY < y){
+                    SensorEntityController.setRot();
+                }
+
+                return true;
             }
         };
     }
