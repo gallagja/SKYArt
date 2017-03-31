@@ -4,6 +4,7 @@
     <item name="canvas_radius" format="float" type="raw">2.0</item>
     <item name="sprayer_height" format="float" type="raw">2.0</item>
     <item name="sprayer_radius" format="float" type="raw">0.05</item>
+    <item name="sprayer_halfangle" format="float" type="raw">7.5</item>
 
     <item name="canvas_pixels_per_meter" format="float" type="raw">100</item>
 

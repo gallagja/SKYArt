@@ -149,7 +149,7 @@ public class SprayerDrawable extends Drawable {
 
             cylinder[i*bitesPerSlice + (slice++)] = x;
             cylinder[i*bitesPerSlice + (slice++)] = y;
-            cylinder[i*bitesPerSlice + (slice++)] = height;
+            cylinder[i*bitesPerSlice + (slice++)] = 0.0f;
 
             x = (float) (radius * Math.cos(nextTheta));
             y = (float) (radius * Math.sin(nextTheta));
@@ -160,7 +160,7 @@ public class SprayerDrawable extends Drawable {
 
             cylinder[i*bitesPerSlice + (slice++)] = x;
             cylinder[i*bitesPerSlice + (slice++)] = y;
-            cylinder[i*bitesPerSlice + (slice++)] = height;
+            cylinder[i*bitesPerSlice + (slice++)] = 0.0f;
         }
         return cylinder;
     }

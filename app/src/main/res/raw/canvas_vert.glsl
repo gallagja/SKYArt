@@ -3,15 +3,11 @@ attribute vec3 vertexPosition; // comes from VertexBuffer
 uniform mat4 vModelView;
 uniform mat4 vProjection;
 
-
 // Depending on if we stay with this version of GLSL, we
 //  may need to use out and in. ("out" in the vertex shader
 //  and "in" in the frag)
 varying vec3 position;
 varying vec3 normal;
-
-varying vec2 v_TexCoordinate;   // This will be passed into the fragment shader.
-attribute vec2 a_TexCoordinate; // Per-vertex texture coordinate information we will pass in.
 
 
 void main()
@@ -33,6 +29,4 @@ void main()
     //  you know that thing that makes objects look bigger when
     //  it's closer and smaller when farther out.
     gl_Position = gl_Position * vProjection;
-
-    v_TexCoordinate = a_TexCoordinate;
 }

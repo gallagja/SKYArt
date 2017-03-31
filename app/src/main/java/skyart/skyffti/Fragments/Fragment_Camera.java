@@ -2,27 +2,19 @@ package skyart.skyffti.Fragments;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
-import android.opengl.EGLExt;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import java.util.zip.Inflater;
 
 import Painter.CanvasDrawable;
 import Painter.PainterTest;
 import Painter.SprayerDrawable;
-import Painter.viewerDrawable;
 import Renderer.ARSurfaceView;
 import Renderer.Camera;
 import Renderer.SensorEntityController;
@@ -95,10 +87,10 @@ public class Fragment_Camera extends Fragment {
         mCamera.setController(camController);
 
 
-        viewerDrawable.setContext(rootView.getContext());
-        viewerDrawable canvas = new viewerDrawable();
-        //CanvasDrawable.setContext(rootView.getContext());
-        //CanvasDrawable canvas = new CanvasDrawable();
+        //viewerDrawable.setContext(rootView.getContext());
+        //viewerDrawable canvas = new viewerDrawable();
+        CanvasDrawable.setContext(rootView.getContext());
+        CanvasDrawable canvas = new CanvasDrawable();
         SprayerDrawable.setContext(rootView.getContext());
         SprayerDrawable sprayerDrawable = new SprayerDrawable();
         PainterTest.setContext(rootView.getContext());
@@ -125,8 +117,8 @@ public class Fragment_Camera extends Fragment {
 
 
         arView.getmRenderer().addEntity("CanvasDrawable", canvas);
-        arView.getmRenderer().addEntity("SprayerDrawable", sprayerDrawable);
-        arView.getmRenderer().addEntity("Painter", painter);
+//        arView.getmRenderer().addEntity("SprayerDrawable", sprayerDrawable);
+//        arView.getmRenderer().addEntity("Painter", painter);
         rootView.setOnTouchListener(touchMe);
 
         return rootView;

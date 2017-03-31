@@ -11,6 +11,7 @@ import java.nio.FloatBuffer;
 import Renderer.Drawable;
 import Renderer.State;
 import Renderer.VertexBuffer;
+import skyart.skyffti.Fragments.Fragment_Color;
 import skyart.skyffti.R;
 import skyart.skyffti.Utils.ResourceLoader;
 
@@ -20,6 +21,8 @@ import skyart.skyffti.Utils.ResourceLoader;
 
 public class CanvasDrawable extends Drawable {
     public class CanvasShaderData {
+        public int sprayerHalfAngle;
+        public int sprayerColor;
         public int colorLoc;
     }
 
@@ -44,6 +47,8 @@ public class CanvasDrawable extends Drawable {
         super.setState(program);
         super.init();
 
+        mShaderData.sprayerHalfAngle = GLES20.glGetUniformLocation(this.getState().getProgram(), "vSprayerHalfAngle");
+        mShaderData.sprayerColor = GLES20.glGetUniformLocation(this.getState().getProgram(), "vSprayerColor");
         mShaderData.colorLoc = GLES20.glGetUniformLocation(this.getState().getProgram(), "vColor");
 
         mVertexBuffer.create();
@@ -61,8 +66,18 @@ public class CanvasDrawable extends Drawable {
         super.draw();
 
         // TODO: Load textures
-        final float [] vColor = {0.0f, 1.0f, 0.0f, 0.25f};
+        final float [] vColor = {.0f, .0f, .0f, .5f};
         GLES20.glUniform4fv(mShaderData.colorLoc, 1, vColor, 0);
+
+        final float [] vSprayerColor = {
+                (float) Fragment_Color.instance.getRed()/255.0f,
+                (float) Fragment_Color.instance.getGreen()/255.0f,
+                (float) Fragment_Color.instance.getBlue()/255.0f,
+                1.0f};
+        GLES20.glUniform4fv(mShaderData.sprayerColor, 1, vSprayerColor, 0);
+
+        float [] halfAngle = new float[]{ResourceLoader.readFloatFromResource(mContext, R.raw.sprayer_halfangle)};
+        GLES20.glUniform1fv(mShaderData.sprayerHalfAngle, 1, halfAngle, 0);
 
         mVertexBuffer.draw();
     }
