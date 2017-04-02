@@ -98,6 +98,11 @@ public class VertexBuffer  {
         mFloatsPerVert = floats;
     }
 
+    public void bind() {
+        VertexBuffer.BindBuffer(mBufferName);
+    }
+    public void activate() { this.bind(); VertexBuffer.Activate(mAttribLoc, mFloatsPerVert);}
+
     public void draw() {
         if (isValid()) {
             VertexBuffer.DrawArrays(mMode, mBufferName, mAttribLoc, mFloatsPerVert, mSize);
@@ -137,15 +142,19 @@ public class VertexBuffer  {
         GLErrors.checkErrors("VertexBuffer.BufferData()");
     }
 
-    public static void DrawArrays(int mode, int name, int attrib, int elems, int size) {
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, name);
-        GLErrors.checkErrors("VertexBuffer.DrawArrays().glBindBuffer(" + name + ")");
-
+    private static void Activate(int attrib, int elems) {
         GLES20.glEnableVertexAttribArray(attrib);
         GLErrors.checkErrors("VertexBuffer.DrawArrays().glEnableVertexAttribArray(" + attrib + ")");
 
         GLES20.glVertexAttribPointer(attrib, elems, GLES20.GL_FLOAT, false, 0, 0);
         GLErrors.checkErrors("VertexBuffer.DrawArrays().glVertexAttribPointer()");
+    }
+
+    private static void DrawArrays(int mode, int name, int attrib, int elems, int size) {
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, name);
+        GLErrors.checkErrors("VertexBuffer.DrawArrays().glBindBuffer(" + name + ")");
+
+        VertexBuffer.Activate(attrib, elems);
 
         GLES20.glDrawArrays(mode, 0, size);
         GLErrors.checkErrors("VertexBuffer.DrawArrays().glDrawArrays()");

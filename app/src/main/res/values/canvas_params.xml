@@ -9,4 +9,6 @@
     <item name="canvas_pixels_per_meter" format="float" type="raw">100</item>
 
     <item name="canvas_cylinder_slices" format="integer" type="raw">64</item>
+
+    <item name="canvas_texture_slot" format="integer" type="raw">0</item>
 </resources>
