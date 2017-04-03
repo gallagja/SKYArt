@@ -7,8 +7,8 @@ import android.opengl.Matrix;
  */
 
 public class Entity {
-    private float[] mTransform;
-    private float[] mPos;
+    protected float[] mTransform;
+    protected float[] mPos;
 
     private EntityController mController;
 

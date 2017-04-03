@@ -2,12 +2,12 @@ package skyart.skyffti;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
+
+import skyart.skyffti.Utils.Permissions;
 
 /**
  * Created by Coltan on 2/17/2017.

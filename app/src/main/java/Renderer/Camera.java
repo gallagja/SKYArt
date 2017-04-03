@@ -8,10 +8,11 @@ import android.opengl.Matrix;
 
 public class Camera extends Entity {
     private float[] mProjection;
+    private static Camera instance;
 
     Camera() {
         super();
-
+            instance = this;
         mProjection = new float[16];
     }
 
@@ -26,5 +27,9 @@ public class Camera extends Entity {
 
         Matrix.perspectiveM(mProjection, 0,
                 fov, aspect, nearz, farz);
+    }
+
+    public static Camera getInstance() {
+        return instance;
     }
 }
