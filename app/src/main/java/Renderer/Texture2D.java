@@ -57,10 +57,6 @@ public class Texture2D {
         this.bind();
     }
 
-
-
-
-
     private static int activeTextures[];
 
     private static int GenTextures() {
@@ -136,7 +132,7 @@ public class Texture2D {
     private static void DeleteTextures(int handle) {
         int [] handles = new int [1];
         handles [0] = handle;
-        GLES20.glDeleteTextures(1, handles, 1);
+        GLES20.glDeleteTextures(1, handles, 0);
         GLErrors.checkErrors("Texture2D.DeleteTextures()");
     }
 }

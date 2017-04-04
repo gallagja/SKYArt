@@ -10,9 +10,6 @@ uniform float vSprayerHalfAngle;
 varying vec3 position;
 varying vec3 normal;
 
-varying vec2 v_TexCoordinate;   // This will be passed into the fragment shader.
-uniform sampler2D u_Texture;
-
 void main() {
     float intens = dot(normalize(position), vec3(0.0, 0.0, -1.0));
     float angle = degrees(acos(intens));
@@ -36,15 +33,13 @@ void main() {
         intens *= attenuation;
 
         intens = max(0.0, min(intens, 1.0));
-       // gl_FragColor.rgb = (vec3(intens) * vSprayerColor.rgb) + ((vec3(1.0-intens)*vColor.rgb) * texture2D(u_Texture, v_TexCoordinate).rgb);
+        gl_FragColor.rgb = (vec3(intens) * vSprayerColor.rgb) + (vec3(1.0-intens)*vColor.rgb);
 
-        //gl_FragColor.a = ((intens) * vSprayerColor.a) + ((1.0-intens)*vColor.a);
+        gl_FragColor.a = ((intens) * vSprayerColor.a) + ((1.0-intens)*vColor.a);
     //    gl_FragColor.a = intens;
-
-
     }
     else {
         gl_FragColor = vColor;
     }
-       gl_FragColor.rgb = vec3(v_TexCoordinate, position.x);
+    gl_FragColor = vColor;
 }

@@ -37,15 +37,17 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
                 return  Fragment_Camera.newInstance(position+1);
 
+            case 3:
+                return  Fragment_Drawing.newInstance(1);
 
         }
-        return FragmentTemplate.PlaceholderFragment.newInstance(position + 1);
+        return FragmentTemplate.newInstance(position + 1);
     }
 
     @Override
     public int getCount() {
         // Show 3 total pages.
-        return 3;
+        return 4;
     }
 
     @Override

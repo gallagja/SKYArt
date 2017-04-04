@@ -69,8 +69,9 @@ public class ColorPicker extends View {
 
     private Matrix gradientRotationMatrix;
 
+
     /** Currently selected color */
-    private float[] colorHSV = new float[] { 0f, 0f, 1f };
+    public static float[] colorHSV = new float[] { 0f, 0f, 1f };
 
     public ColorPicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);

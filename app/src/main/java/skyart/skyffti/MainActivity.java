@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import java.util.Timer;
 
+import Brain.MainBrain;
 import Renderer.ARSurfaceView;
 import Renderer.Camera;
 import Renderer.SensorEntityController;
@@ -40,6 +41,7 @@ public class MainActivity extends FragmentActivity{
 
         mViewPager.setOffscreenPageLimit(3);  //So no fragments get deleted from unuse
 
+        MainBrain.create(getApplication().getApplicationContext());
         instance = this;
 
     }

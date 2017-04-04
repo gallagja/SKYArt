@@ -7,6 +7,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import skyart.skyffti.Utils.Permissions;
 
 /**
@@ -19,6 +22,7 @@ public class Splash extends Activity {
     /** Duration of wait **/
     private final int SPLASH_DISPLAY_LENGTH = 1000;
     public boolean close_on_fail = true;
+    private Object mGoogleApiClient;
 
     /** Called when the activity is first created. */
     @Override
@@ -26,6 +30,8 @@ public class Splash extends Activity {
         super.onCreate(icicle);
         setContentView(R.layout.splash);
         Permissions.check(this, Manifest.permission.CAMERA, 0);
+
+
 
     }
     @Override

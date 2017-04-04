@@ -117,11 +117,11 @@ public class SprayerDrawable extends Drawable {
                         mContext,
                         R.raw.canvas_vert // TODO: needs new shader with textures and shit
                 );
-        mFragCode =
-                ResourceLoader.readTextFileFromRawResource(
-                        mContext,
-                        R.raw.spot_frag // TODO: needs new shader with textures and shit
-                );
+//        mFragCode =
+//                ResourceLoader.readTextFileFromRawResource(
+//                        mContext,
+//                       // R.raw.spot_frag // TODO: needs new shader with textures and shit
+//                );
     }
 
     private static FloatBuffer mVertices;

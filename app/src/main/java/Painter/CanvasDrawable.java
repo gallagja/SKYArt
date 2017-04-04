@@ -10,12 +10,17 @@ import android.util.Log;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
+import Brain.Artwork;
+import Brain.MainBrain;
 import Renderer.Drawable;
+import Renderer.GLErrors;
 import Renderer.State;
 import Renderer.Texture2D;
 import Renderer.VertexBuffer;
 import skyart.skyffti.Fragments.Fragment_Color;
+import skyart.skyffti.MainActivity;
 import skyart.skyffti.R;
 import skyart.skyffti.Utils.ResourceLoader;
 
@@ -96,8 +101,14 @@ public class CanvasDrawable extends Drawable {
         mTexture.bind();
         mTexture.send(bitmap);
         bitmap.recycle();
-    }
 
+         fbo = new FrameBuffer( 1024, 1024 );
+        final int[] texIds = new int[1];
+        texid = createBlankTextures( texIds, 1024, 1024 );
+
+    }
+    FrameBuffer fbo;
+    int texid;
     public void delete() {
         mVertexBuffer.delete();
         mIndexBuffer.delete();
@@ -124,6 +135,22 @@ public class CanvasDrawable extends Drawable {
 
         GLES20.glUniform1i(mShaderData.viewerModeLoc, mViewerMode ? 1 : 0);
 
+
+
+
+
+        fbo.bind( texid, 1024, 1024 );
+
+//        if(!mViewerMode)
+//            mTexture.send(SavePixels(0, 1, 1024, 1024));
+//texture should turn blue here since in the bind() function I placed a glClear with blue
+        fbo.unbind();
+
+
+        Bitmap art = MainBrain.getCurrent();
+        if (art != null)
+            mTexture.send(art);
+//
         int textureSlot = ResourceLoader.readIntFromResource(mContext, R.raw.canvas_texture_slot);
         mTexture.activate(textureSlot);
         GLES20.glUniform1i(mShaderData.texLoc, textureSlot);
@@ -238,5 +265,71 @@ public class CanvasDrawable extends Drawable {
         Log.d("CanvasDrawable", "Height: " + height);
         Log.d("CanvasDrawable", "Radius: " + radius);
         Log.d("CanvasDrawable", "Slices: " + slices);
+    }
+
+    public static Bitmap SavePixels(int x, int y, int w, int h)
+    {
+        int b[]=new int[w*(y+h)];
+        int bt[]=new int[w*h];
+        IntBuffer ib=IntBuffer.wrap(b);
+        ib.position(0);
+        GLES20.glReadPixels(0, 0, w, h, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ib);
+
+        for(int i=0, k=0; i<h; i++, k++)
+        {
+            for(int j=0; j<w; j++)
+            {
+                int pix=b[i*w+j];
+                int pb=(pix>>16)&0xff;
+                int pr=(pix<<16)&0x00ff0000;
+                int pix1=(pix&0xff00ff00) | pr | pb;
+                bt[(h-k-1)*w+j]=pix1;
+            }
+        }
+
+
+        Bitmap sb=Bitmap.createBitmap(bt, w, h, Bitmap.Config.ARGB_8888);
+        return sb;
+    }
+
+    public int createBlankTextures(int[] texIds, int width, int height ){
+        GLES20.glGenTextures( texIds.length, texIds, 0 );
+        for( int i=0; i<texIds.length; i++ ){
+            GLES20.glBindTexture( GLES20.GL_TEXTURE_2D, texIds[i] );
+            GLES20.glTexParameteri( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST );
+            GLES20.glTexParameteri( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST );
+            GLES20.glTexImage2D( GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null );
+            GLES20.glGenerateMipmap( GLES20.GL_TEXTURE_2D );
+        }
+        return texIds[0];
+    }
+
+    public static class FrameBuffer{
+
+        private final int width;
+        private final int height;
+        private final int[] fboId = new int[1];
+        private final int[] renId = new int[1];
+
+        public FrameBuffer( int Width, int Height ){
+
+            width = Width;
+            height = Height;
+
+            GLES20.glGenFramebuffers( 1, fboId, 0 );
+            GLES20.glBindFramebuffer( GLES20.GL_FRAMEBUFFER, fboId[0] );
+            GLES20.glFramebufferRenderbuffer( GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT, GLES20.GL_RENDERBUFFER, renId[0] );
+
+            GLES20.glBindFramebuffer( GLES20.GL_FRAMEBUFFER, 0);
+        }
+
+        public void bind( int texId, int texWidth, int texHeight ){
+            GLES20.glBindFramebuffer( GLES20.GL_FRAMEBUFFER, fboId[0] );
+            GLES20.glFramebufferTexture2D( GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, texId, 0 );
+        }
+
+        public void unbind(){
+            GLES20.glBindFramebuffer( GLES20.GL_FRAMEBUFFER, 0 );
+        }
     }
 }
