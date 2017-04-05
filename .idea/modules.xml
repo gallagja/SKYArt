@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Skyffti.iml" filepath="$PROJECT_DIR$/Skyffti.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SKYArt.iml" filepath="$PROJECT_DIR$/SKYArt.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

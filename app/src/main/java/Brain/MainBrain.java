@@ -15,6 +15,7 @@
 
 package Brain;
 
+import android.location.Location;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -77,7 +78,7 @@ public class MainBrain {
         Location loc2 = new Location("GPS");
         loc2.setLatitude(28.53109);
         loc2.setLongitude(-81.0508);
-       // Fragment_Maps.setArtMarker(loc, "ArtWork2");
+        // Fragment_Maps.setArtMarker(loc, "ArtWork2");
         ArtList.add(new Artwork(bitmap2, loc2, ArtNamingID));
         ArtNamingID++;
 
@@ -134,7 +135,7 @@ public class MainBrain {
 
     public void checkRadarRadius(Location myLocation){
         for(Artwork a : ArtList) {
-            double dist = distFrom(myLocation, a.location);
+            double dist = distFrom(myLocation, a.getLoc());
             if (dist < radarRadius) {
                 if (!a.hasMarker) {
                     a.setMarker();
@@ -146,15 +147,15 @@ public class MainBrain {
     }
     public void checkPenDropRadius(Location myLocation){
         for(Artwork a : ArtList) {
-            double dist = distFrom(myLocation, a.location);
+            double dist = distFrom(myLocation, a.getLoc());
             if (dist < dropPenRadius) {
-                if (a.ID != currentID && (dist < currentDist || currentDist == -1)) {
+                if (a.getArtID() != currentID && (dist < currentDist || currentDist == -1)) {
                     Fragment_Camera.loadArt(a);
-                    currentID = a.ID;
+                    currentID = a.getArtID();
                     currentDist = dist;
                 }
             }
-            if(a.ID == currentID && dist > dropPenRadius){
+            if(a.getArtID() == currentID && dist > dropPenRadius){
                 currentID = -1;
                 currentDist = -1;
             }
@@ -168,11 +169,11 @@ public class MainBrain {
 
         //Ping
 
-            instance.checkPingRadius(location);
-            instance.checkPenDropRadius(location);
-            instance.checkRadarRadius(location);
-            lastUpdate = System.currentTimeMillis();
-            pingRingCollision = false;
+        instance.checkPingRadius(location);
+        instance.checkPenDropRadius(location);
+        instance.checkRadarRadius(location);
+        lastUpdate = System.currentTimeMillis();
+        pingRingCollision = false;
 
 
     }
@@ -184,7 +185,7 @@ public class MainBrain {
     }
 
     public static void createArtwork(Bitmap bitmap, Location loc){
-            Artwork art = new Artwork(bitmap, loc, instance.ArtNamingID);
+        Artwork art = new Artwork(bitmap, loc, instance.ArtNamingID);
         instance.ArtList.add(art);
 
     }

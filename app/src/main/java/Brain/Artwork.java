@@ -22,18 +22,23 @@ import skyart.skyffti.Fragments.Fragment_Maps;
 public class Artwork {
 
 
-    Location location; //location of the art work
-    Bitmap imageHD; //High Res
-    Bitmap image;   //Low Res
-    String Title;   // Maybe?
+    private Location location; //location of the art work
+    private Bitmap imageHD; //High Res
+    private Bitmap image;   //Low Res
+    private String title;   // Maybe?
 
     public boolean hasMarker = false;
     Marker marker;
 
-    public int ID; //Its ID according to the brain
+    private int ID; //Its ID according to the brain
 
     public Artwork(Bitmap bm, Location loc, int id){
         image = bm;
+        location = loc;
+        ID = id;
+    }
+
+    public Artwork(int id, Location loc) {
         location = loc;
         ID = id;
     }
@@ -57,13 +62,20 @@ public class Artwork {
     }
     //endregion
 
-    public Bitmap getBitmap() {
-        return image;
-    }
+    // Setters & Getters
+    public Bitmap getBitmap() { return image; }
+    public void setBitmap(Bitmap img) { this.image = img; }
 
-    public String getTitle() {
-        return Title;
-    }
+    public Bitmap getBitmapHD(){ return imageHD; }
+    public void setBitmapHD(Bitmap img) { this.imageHD = img; }
 
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public Location getLoc(){ return location; }
+    public void setLoc(Location loc) { this.location = loc; }
+
+    public int getArtID(){ return ID; }
+    public void setArtID(int artID) { this.ID = artID; }
 
 }

@@ -25,5 +25,14 @@ tools:context="skyart.skyffti.MainActivity">
         android:backgroundTint="@android:color/background_dark"
         android:foreground="@android:color/background_light" />
 
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        app:layout_anchor="@+id/textureView"
+        app:layout_anchorGravity="center_vertical|center_horizontal"
+        android:layout_gravity="center_vertical|center_horizontal" />
+
 </android.support.design.widget.CoordinatorLayout>
 
