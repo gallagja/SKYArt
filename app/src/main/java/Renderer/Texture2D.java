@@ -83,11 +83,11 @@ public class Texture2D {
                     Texture2D.activeTextures[i] = -1;
             }
 
-//            if (Texture2D.activeTextures[index] != handle) {
+            if (Texture2D.activeTextures[index] != handle) {
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + index);
                 GLErrors.checkErrors("Texture2D.ActiveTexture()");
                 Texture2D.activeTextures[index] = handle;
-//            }
+            }
         }
         else {
             throw new RuntimeException("Texture2D.ActivateTexture(): " + index + " is over the max of " + (Texture2D.NumTextureSlots-1));

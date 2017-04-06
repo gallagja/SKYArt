@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import Renderer.BMPTexture;
 import Renderer.Drawable;
 import Renderer.State;
 import Renderer.Texture2D;
@@ -35,7 +36,7 @@ public class CanvasDrawable extends Drawable {
 
     private VertexBuffer mVertexBuffer;
     private VertexBuffer mIndexBuffer;
-    private Texture2D mTexture;
+    private BMPTexture mTexture;
     private CanvasShaderData mShaderData;
     private boolean mViewerMode;
 
@@ -46,7 +47,7 @@ public class CanvasDrawable extends Drawable {
         mVertexBuffer = new VertexBuffer(3);
         mIndexBuffer = new VertexBuffer(2);
 
-        mTexture = new Texture2D();
+        mTexture = new BMPTexture();
 
         mViewerMode = false;
     }
@@ -55,7 +56,7 @@ public class CanvasDrawable extends Drawable {
         mViewerMode = enabled;
     }
 
-    public Texture2D getTexture() {
+    public BMPTexture getTexture() {
         return mTexture;
     }
 
@@ -86,16 +87,12 @@ public class CanvasDrawable extends Drawable {
         mIndexBuffer.setAttribute(this.getState(), "texCoord");
         mIndexBuffer.send(mIndices, mVertCount);
 
-
-
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
         // Read in the resource
         final Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.art, options);
-        mTexture.create();
-        mTexture.bind();
-        mTexture.send(bitmap);
-        bitmap.recycle();
+        mTexture.setImage(bitmap);
+        mTexture.ensure();
     }
 
     public void delete() {
