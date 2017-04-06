@@ -25,9 +25,6 @@ import skyart.skyffti.Utils.DrawingView;
 
 public class Fragment_Drawing extends Fragment {
 
-
-    public static Fragment_Drawing instance;
-
     public Fragment_Drawing() {
 
     }
@@ -42,8 +39,6 @@ public class Fragment_Drawing extends Fragment {
      */
     public static Fragment_Drawing newInstance(int sectionNumber) {
         Fragment_Drawing fragment = new Fragment_Drawing();
-
-        instance = fragment;
         return fragment;
     }
 

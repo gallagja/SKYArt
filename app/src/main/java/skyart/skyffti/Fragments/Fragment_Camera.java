@@ -15,13 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import Brain.Artwork;
+import Artwork.Artwork;
 import Painter.CanvasDrawable;
 import Painter.SprayerDrawable;
 import Renderer.ARSurfaceView;
@@ -39,8 +37,6 @@ import skyart.skyffti.Utils.SensorControl;
 
 public class Fragment_Camera extends Fragment {
 
-    //NOT used
-    private static final String ARG_SECTION_NUMBER = "section_number";
 
     //Camera Junk
     public static Context context;
@@ -79,7 +75,6 @@ public class Fragment_Camera extends Fragment {
     public static Fragment_Camera newInstance(int sectionNumber) {
         Fragment_Camera fragment = new Fragment_Camera();
         Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         instance = fragment;
         return fragment;
@@ -157,9 +152,6 @@ public class Fragment_Camera extends Fragment {
 
         textView = (TextView) rootView.findViewById(R.id.textGPSView);
         //imageView = (ImageView) rootView.findViewById(R.id.imageView);
-        textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-
-
         return rootView;
     }
 

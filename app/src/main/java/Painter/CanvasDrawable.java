@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
-import android.opengl.GLUtils;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
@@ -12,15 +11,12 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import Brain.Artwork;
-import Brain.MainBrain;
+import Artwork.ArtworkController;
 import Renderer.Drawable;
-import Renderer.GLErrors;
 import Renderer.State;
 import Renderer.Texture2D;
 import Renderer.VertexBuffer;
 import skyart.skyffti.Fragments.Fragment_Color;
-import skyart.skyffti.MainActivity;
 import skyart.skyffti.R;
 import skyart.skyffti.Utils.ResourceLoader;
 
@@ -147,7 +143,7 @@ public class CanvasDrawable extends Drawable {
         fbo.unbind();
 
 
-        Bitmap art = MainBrain.getCurrent();
+        Bitmap art = ArtworkController.getCurrent();
         if (art != null)
             mTexture.send(art);
 //

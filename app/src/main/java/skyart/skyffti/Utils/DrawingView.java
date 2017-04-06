@@ -6,17 +6,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.location.Location;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import Brain.MainBrain;
-import Painter.CanvasDrawable;
+import Artwork.ArtworkController;
 import skyart.skyffti.Fragments.ColorPicker;
-import skyart.skyffti.Fragments.Fragment_Camera;
 import skyart.skyffti.Fragments.Fragment_Maps;
-import skyart.skyffti.R;
 
 /**
  * Created by Coltan on 4/4/2017.
@@ -126,7 +122,7 @@ public class DrawingView extends View {
     }
 
     public static void send() {
-        MainBrain.createArtwork(instance.canvasBitmap, Fragment_Maps.getLocation());
+        ArtworkController.createArtwork(instance.canvasBitmap, Fragment_Maps.getLocation());
 
     }
 }

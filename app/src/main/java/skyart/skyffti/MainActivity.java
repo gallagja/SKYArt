@@ -4,15 +4,9 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.view.MotionEvent;
 import android.widget.Toast;
 
-import java.util.Timer;
-
-import Brain.MainBrain;
-import Renderer.ARSurfaceView;
-import Renderer.Camera;
-import Renderer.SensorEntityController;
+import Artwork.ArtworkController;
 import skyart.skyffti.Fragments.SectionsPagerAdapter;
 
 
@@ -41,7 +35,7 @@ public class MainActivity extends FragmentActivity{
 
         mViewPager.setOffscreenPageLimit(3);  //So no fragments get deleted from unuse
 
-        MainBrain.create(getApplication().getApplicationContext());
+        ArtworkController.create(getApplication().getApplicationContext());
         instance = this;
 
     }

@@ -1,7 +1,7 @@
 /**
  * Created by Coltan on 3/30/2017.
  *
- * MainBrain is the componet to that controls markers, radiuses, artwork, etc
+ * ArtworkController is the componet to that controls markers, radiuses, artwork, etc
  *
  *
  *------------------\
@@ -13,51 +13,50 @@
  *
  */
 
-package Brain;
+package Artwork;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import skyart.skyffti.Fragments.Fragment_Maps;
 import skyart.skyffti.Fragments.Fragment_Camera;
+import skyart.skyffti.MainActivity;
 import skyart.skyffti.R;
 import skyart.skyffti.Utils.ResourceLoader;
+import skyart.skyffti.database.databaseUtils;
 
 
-
-public class MainBrain {
+public class ArtworkController {
 
     private static boolean pingRingCollision; //When the RadarRadius hits the pingRadius
 
     //Radiuses in Meters
-    float dropPenRadius = 3;
-    float dropPenTimer = 300; //Minimum time require before next check
-    float radarRadius = 30;
-    float radarTimer = 500;   //Minimum time require before next check
-    float pingRadius= 60;
-    float pingTimer = 30000;   //Minimum time require before next check
+    private float dropPenRadius = 3;
+    private float dropPenTimer = 300; //Minimum time require before next check
+    private float radarRadius = 30;
+    private float radarTimer = 500;   //Minimum time require before next check
+    private float pingRadius= 6000;
+    private float pingTimer = 60000;   //Minimum time require before next check
 
-    String ArtNaming = "artPiece"; //Naming convention for the artPieces. NOT USED
-    int ArtNamingID = 0;   //increments as more Art comes in
-    int currentID = -1;    // used to know the viewing bitmap
-    double currentDist = -1;
+    private String ArtNaming = "artPiece"; //Naming convention for the artPieces. NOT USED
+    private int ArtNamingID = 0;   //increments as more Art comes in
+    private int currentID = -1;    // used to know the viewing bitmap
+    private double currentDist = -1;
 
-    Location pingRingLocation; //Location of the last ping ring.
+    private Location pingRingLocation; //Location of the last ping ring.
 
-    static float lastUpdate; //The Timestamp of the last update
+    private float lastUpdate; //The Timestamp of the last update
 
-    List<Artwork> ArtList;   //Dis is the master list of all the art within the ping radius
+    private List<Artwork> ArtList;   //Dis is the master list of all the art within the ping radius
 
-    private static MainBrain instance;
+    private static ArtworkController instance;
     private Context mContext;
 
-    final Bitmap defaultBitmap;
+    private final Bitmap defaultBitmap;
 
     //FOR TESTING ONLY
     public void loadTestData(){
@@ -85,7 +84,7 @@ public class MainBrain {
 
     }
 
-    public MainBrain(Context m){
+    public ArtworkController(Context m){
         ArtList = new ArrayList<Artwork>();
         instance = this;
         mContext = m;
@@ -98,7 +97,9 @@ public class MainBrain {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
         defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.art, options);
+        lastUpdate = System.currentTimeMillis();
     }
+
 
     /*
     Calcuates the Distances between two Locations
@@ -127,8 +128,13 @@ public class MainBrain {
      */
     public void checkPingRadius(Location myLocation){
 
-        //TODO Call server
-
+        for(Artwork a : ArtList) {
+            if(a.hasMarker)
+            a.removeMarker();
+            a = null;
+        }
+        
+        ArtList = databaseUtils.getNearby(""+myLocation.getLatitude(), ""+myLocation.getLongitude(), (int)pingRadius);
     }
 
 
@@ -164,14 +170,16 @@ public class MainBrain {
 
     public static void LocationUpdate(Location location) {
 
-        float timeDiff = System.currentTimeMillis() - lastUpdate;
+        float timeDiff = System.currentTimeMillis() - instance.lastUpdate;
 
-        //Ping
-
-            instance.checkPingRadius(location);
+            if(instance.lastUpdate >= instance.pingTimer) {
+                instance.checkPingRadius(location);
+                instance.lastUpdate = System.currentTimeMillis();
+                MainActivity.makeToast("hey");
+            }
             instance.checkPenDropRadius(location);
             instance.checkRadarRadius(location);
-            lastUpdate = System.currentTimeMillis();
+
             pingRingCollision = false;
 
 
@@ -179,7 +187,7 @@ public class MainBrain {
 
     public static void create(Context mContext) {
         if(instance == null){
-            instance = new MainBrain(mContext);
+            instance = new ArtworkController(mContext);
         }
     }
 

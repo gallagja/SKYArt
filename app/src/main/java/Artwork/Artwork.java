@@ -1,9 +1,8 @@
-package Brain;
+package Artwork;
 
 import android.graphics.Bitmap;
 import android.location.Location;
 
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -34,6 +33,12 @@ public class Artwork {
 
     public Artwork(Bitmap bm, Location loc, int id){
         image = bm;
+        location = loc;
+        ID = id;
+    }
+
+    public Artwork(Location loc, int id){
+        image = null;
         location = loc;
         ID = id;
     }

@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,7 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import Brain.MainBrain;
+import Artwork.ArtworkController;
 import skyart.skyffti.R;
 import skyart.skyffti.Utils.ResourceLoader;
 
@@ -141,8 +140,8 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.getUiSettings().setScrollGesturesEnabled(false);
-        mMap.getUiSettings().setAllGesturesEnabled(false);
+       // mMap.getUiSettings().setScrollGesturesEnabled(false);
+       // mMap.getUiSettings().setAllGesturesEnabled(false);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -185,9 +184,9 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
         curLoc = location;
         if (mMap != null) {
 //            mMap.addMarker(new MarkerOptions().position(latLng).title("Your current location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+           // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             Fragment_Camera.updateGPS(location);
-            MainBrain.LocationUpdate(location);
+            ArtworkController.LocationUpdate(location);
             radarRadius.setCenter(latLng);
         }
     }
