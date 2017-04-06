@@ -133,7 +133,7 @@ public class ArtworkController {
             a.removeMarker();
             a = null;
         }
-        
+
         ArtList = databaseUtils.getNearby(""+myLocation.getLatitude(), ""+myLocation.getLongitude(), (int)pingRadius);
     }
 
