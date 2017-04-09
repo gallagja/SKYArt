@@ -30,7 +30,7 @@ public class Splash extends Activity {
         Permissions.check(this, Manifest.permission.CAMERA, 0);
 
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
+                Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(this,
