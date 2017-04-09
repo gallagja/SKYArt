@@ -10,7 +10,6 @@ import skyart.skyffti.Utils.SensorControl;
 
 public class SensorEntityController extends EntityController{
     public static  boolean initDone = false;
-    static boolean initDone2 = false;
     static Entity ent;
     public void apply(Entity entity) {
         try {
@@ -40,6 +39,5 @@ public class SensorEntityController extends EntityController{
         float [] hpr = SensorControl.getInstance().getINITHPR();
         Log.d("SensorEntityController", "apply: rot: " + hpr[0] +"," + hpr[1] + "," + hpr[2]);
         ent.setRotation(hpr);
-        initDone2 = true;
     }
 }

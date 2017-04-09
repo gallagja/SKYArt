@@ -153,7 +153,7 @@ public class CanvasDrawable extends Drawable {
             return;
 
         if (mVertexCode != null &&
-            mFragCode   != null )
+                mFragCode   != null )
             return;
 
         mVertexCode =

@@ -2,6 +2,7 @@ package skyart.skyffti.Fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,10 +18,19 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import Artwork.ArtworkController;
 import skyart.skyffti.R;
+import skyart.skyffti.Utils.ResourceLoader;
 
 
 public class Fragment_Maps extends Fragment implements OnMapReadyCallback, LocationListener {
@@ -36,11 +46,18 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+
+
     public static Fragment instance;
     private static GoogleMap mMap;
     private LocationManager mLm;
     private LocationListener mLocationListener;
     private double lat, lon;
+    private static List<Marker> markers;
+
+    private static Location curLoc;
+
+    private Circle radarRadius;
 
 
     public void init() {
@@ -64,8 +81,11 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         View rootView = inflater.inflate(R.layout.activity_maps, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.theColorPicker);
+        TextView textView = new TextView(rootView.getContext());
+
         //setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
@@ -88,6 +108,9 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
         }
         mLm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         mLm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+
+
+        markers = new ArrayList<Marker>();
 
 
 
@@ -117,8 +140,8 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.getUiSettings().setScrollGesturesEnabled(false);
-        mMap.getUiSettings().setAllGesturesEnabled(false);
+       // mMap.getUiSettings().setScrollGesturesEnabled(false);
+       // mMap.getUiSettings().setAllGesturesEnabled(false);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -136,7 +159,10 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
         mMap.setMyLocationEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
 
-
+        radarRadius = mMap.addCircle(new CircleOptions()
+                .center(new LatLng(-33.87365, 151.20689))
+                .radius(ResourceLoader.readFloatFromResource(this.getContext(), R.raw.radar_radius))
+                .strokeColor(Color.CYAN));
 
        // onStart();
     }
@@ -155,9 +181,13 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
         lon = location.getLongitude();
         lat = location.getLatitude();
         LatLng latLng = new LatLng(lat, lon);
+        curLoc = location;
         if (mMap != null) {
 //            mMap.addMarker(new MarkerOptions().position(latLng).title("Your current location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+           // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            Fragment_Camera.updateGPS(location);
+            ArtworkController.LocationUpdate(location);
+            radarRadius.setCenter(latLng);
         }
     }
 
@@ -174,6 +204,22 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    public static Location getLocation(){
+        return curLoc;
+
+    }
+
+    public static Marker setArtMarker(MarkerOptions marker) {
+       Marker temp = mMap.addMarker(marker);
+        markers.add(temp);
+        return temp;
+    }
+
+    public static void removeArtMarker(Marker marker) {
+        marker.setVisible(false); //This cannot be the best way.
+        markers.remove(marker);
     }
 }
 

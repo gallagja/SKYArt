@@ -8,17 +8,41 @@ android:paddingLeft="@dimen/activity_horizontal_margin"
 android:paddingRight="@dimen/activity_horizontal_margin"
 android:paddingTop="@dimen/activity_vertical_margin">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingViewSwitchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:backgroundTint="@android:color/holo_blue_bright"
+        app:fabSize="mini"
+        app:srcCompat="@android:drawable/btn_star_big_on"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/textGPSView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="47dp"
+        android:text="TextView" />
+
     <TextureView
-    android:id="@+id/textureView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/background_light"
-    android:foreground="@android:color/background_light" />
+        android:id="@+id/textureView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_light"
+        android:foreground="@android:color/background_light" />
 
     <Renderer.ARSurfaceView
         android:id="@+id/arView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="392dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/floatingColorPicker"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/floatingColorPicker" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingColorPicker"
@@ -27,6 +51,7 @@ android:paddingTop="@dimen/activity_vertical_margin">
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:clickable="true"
+        app:elevation="24dp"
         app:fabSize="mini"
         app:srcCompat="@android:drawable/ic_menu_edit" />
 

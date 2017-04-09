@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="ping_radius" format="float" type="raw">30000000.0</item>
+    <item name="radar_radius" format="float" type="raw">15000000.0</item>
+    <item name="pen_radius" format="float" type="raw">5.0</item>
+</resources>
