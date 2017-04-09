@@ -49,7 +49,7 @@ public class ArtworkController {
 
     private Location pingRingLocation; //Location of the last ping ring.
 
-    private float lastUpdate; //The Timestamp of the last update
+    private int lastUpdate; //The Timestamp of the last update
 
     private List<Artwork> ArtList;   //Dis is the master list of all the art within the ping radius
 
@@ -97,7 +97,7 @@ public class ArtworkController {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
         defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.art, options);
-        lastUpdate = System.currentTimeMillis();
+        lastUpdate = (int)System.currentTimeMillis();
     }
 
 
@@ -170,11 +170,12 @@ public class ArtworkController {
 
     public static void LocationUpdate(Location location) {
 
-        float timeDiff = System.currentTimeMillis() - instance.lastUpdate;
+        int sysTime = (int)System.currentTimeMillis(); //For some reason currentMillisecond wasn't updating
+        int timeDiff =(int) (sysTime - instance.lastUpdate);
 
-            if(instance.lastUpdate >= instance.pingTimer) {
+            if(timeDiff >= instance.pingTimer) {
                 instance.checkPingRadius(location);
-                instance.lastUpdate = System.currentTimeMillis();
+                instance.lastUpdate = (int)System.currentTimeMillis();
                 MainActivity.makeToast("hey");
             }
             instance.checkPenDropRadius(location);
