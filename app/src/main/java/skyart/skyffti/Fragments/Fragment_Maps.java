@@ -140,8 +140,8 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-       // mMap.getUiSettings().setScrollGesturesEnabled(false);
-       // mMap.getUiSettings().setAllGesturesEnabled(false);
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMap.getUiSettings().setAllGesturesEnabled(false);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -184,7 +184,7 @@ public class Fragment_Maps extends Fragment implements OnMapReadyCallback, Locat
         curLoc = location;
         if (mMap != null) {
 //            mMap.addMarker(new MarkerOptions().position(latLng).title("Your current location"));
-           // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             Fragment_Camera.updateGPS(location);
             ArtworkController.LocationUpdate(location);
             radarRadius.setCenter(latLng);

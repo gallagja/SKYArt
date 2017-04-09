@@ -199,12 +199,12 @@ public class Fragment_Camera extends Fragment {
     }
 
     public static void loadArt(Artwork art){
-        instance.canvas.getTexture().send(art.getBitmap());
+        instance.canvas.getTexture().setImage(art.getBitmap());
 
     }
 
     public static void sendBitmap(Bitmap bitmap){
-        instance.canvas.getTexture().send(bitmap);
+        instance.canvas.getTexture().setImage(bitmap);
     }
 
 }
