@@ -43,6 +43,11 @@ public class MainActivity extends FragmentActivity{
         instance = this;
 
     }
+    @Override
+    protected void onPause() {
+        android.os.Process.killProcess(android.os.Process.myPid());
+        super.onPause();
+    }
 
     /*
     Can make a toast from any class

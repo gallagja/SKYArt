@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import skyart.skyffti.Utils.Permissions;
 
@@ -19,13 +21,24 @@ public class Splash extends Activity {
     /** Duration of wait **/
     private final int SPLASH_DISPLAY_LENGTH = 1000;
     public boolean close_on_fail = true;
-
+    public int locationEnabled;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.splash);
         Permissions.check(this, Manifest.permission.CAMERA, 0);
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        locationEnabled);
+
+
+        }
 
     }
     @Override
