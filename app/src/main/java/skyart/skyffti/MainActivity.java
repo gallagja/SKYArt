@@ -50,4 +50,9 @@ public class MainActivity extends FragmentActivity{
     public static void makeToast(String text){
         Toast.makeText(instance, text, Toast.LENGTH_SHORT);
     }
+    @Override
+    protected void onPause() {
+        android.os.Process.killProcess(android.os.Process.myPid());
+        super.onPause();
+    }
 }
